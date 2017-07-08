@@ -1,0 +1,18 @@
+2017-07-08 00:30:08 HttpConnector httpConnector.allAddress
+2017-07-08 00:30:08 HttpConnector[8080] httpConnector.starting
+2017-07-08 00:30:08 HttpProcessor[8080][0] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-08 00:30:08 HttpProcessor[8080][1] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-08 00:30:08 HttpProcessor[8080][2] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-08 00:30:08 HttpProcessor[8080][3] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-08 00:30:08 HttpProcessor[8080][4] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-08 00:30:08 Starting  context null
+2017-07-08 00:30:08 context started
+2017-07-08 00:55:20 HttpConnector httpConnector.allAddress
+2017-07-08 00:55:20 HttpConnector[8080] httpConnector.starting
+2017-07-08 00:55:21 HttpProcessor[8080][0] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-08 00:55:21 HttpProcessor[8080][1] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-08 00:55:21 HttpProcessor[8080][2] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-08 00:55:21 HttpProcessor[8080][3] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-08 00:55:21 HttpProcessor[8080][4] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-08 00:55:21 Starting  context null
+2017-07-08 00:55:21 context started
