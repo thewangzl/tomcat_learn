@@ -3,22 +3,41 @@ package org.apache.catalina.loader;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilePermission;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.net.URLStreamHandlerFactory;
+import java.util.jar.JarFile;
+
+import javax.naming.Binding;
+import javax.naming.NameClassPair;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.DirContext;
+import javax.servlet.ServletContext;
 
 import org.apache.catalina.Container;
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
+import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.util.LifecycleSupport;
+import org.apache.catalina.util.StringManager;
 import org.apache.naming.resources.DirContextURLStreamHandler;
 import org.apache.naming.resources.DirContextURLStreamHandlerFactory;
+import org.apache.naming.resources.Resource;
 
 public class WebappLoader implements Loader,Lifecycle,PropertyChangeListener,Runnable {
 
@@ -70,6 +89,8 @@ public class WebappLoader implements Loader,Lifecycle,PropertyChangeListener,Run
 	
 	private int debug = 0;
 	
+	protected static final StringManager sm = StringManager.getManager(Constants.Package);
+	
 	private static final String info = "org.apache.catalina.logger.WebappLoader/1.0";
 	
 	public WebappLoader() {
@@ -85,7 +106,7 @@ public class WebappLoader implements Loader,Lifecycle,PropertyChangeListener,Run
 	private WebappClassLoader createClassLoader() throws Exception{
 		
 		
-		Class clazz = Class.forName(loaderClass);
+		Class<?> clazz = Class.forName(loaderClass);
 		WebappClassLoader classLoader = null;
 		if(this.parentClassLoader == null){
 			//
@@ -93,9 +114,9 @@ public class WebappLoader implements Loader,Lifecycle,PropertyChangeListener,Run
 			//In tomcat5, this if block is replaced by the following:
 			//parentClassLoader = Thread.currentThread().getContextClassLoader();
 		}else{
-			Class[] argsTypes = {ClassLoader.class};
+			Class<?>[] argsTypes = {ClassLoader.class};
 			Object[] args = {parentClassLoader};
-			Constructor constr = clazz.getConstructor(argsTypes);
+			Constructor<?> constr = clazz.getConstructor(argsTypes);
 			classLoader = (WebappClassLoader)constr.newInstance(args);
 		}
 		return classLoader;
@@ -121,7 +142,7 @@ public class WebappLoader implements Loader,Lifecycle,PropertyChangeListener,Run
 					continue;
 				}
 			}catch(Exception e){
-				log("webappLoader.failModifiedCheck",e);
+				log(sm.getString("webappLoader.failModifiedCheck"),e);
 				continue;
 			}
 			
@@ -172,9 +193,33 @@ public class WebappLoader implements Loader,Lifecycle,PropertyChangeListener,Run
 		thread.start();
 	}
 	
-	private void notifyContext() {
-		// TODO Auto-generated method stub
+	/**
+	 * Stop the background thread that is periodically checking for modified classes.
+	 */
+	private void threadStop(){
+		if(thread == null){
+			return;
+		}
 		
+		if(debug >= 1){
+			log("Stopping background thread");
+		}
+		threadDone = true;
+		thread.interrupt();
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			;
+		}
+		thread = null;
+	}
+	
+	/**
+	 * Nofify our context that a reload is appropriate
+	 */
+	private void notifyContext() {
+		WebappContextNotifier notifier = new WebappContextNotifier();
+		(new Thread(notifier)).start();
 	}
 	
 	/**
@@ -235,14 +280,419 @@ public class WebappLoader implements Loader,Lifecycle,PropertyChangeListener,Run
 			throw new LifecycleException("start: ",t);
 		}
 		
-		//TODO
-		ValidatePackages();
+		//FIXME -- has been removed in laster tomcat
+		validatePackages();
+		
+		//Starting our background thread if we are reloadable;
+		if(reloadable){
+			log(sm.getString("webappLoader.reloading"));
+			threadStart();
+		}
 	}
+	
 
+	/**
+	 * Stop this component, finilizing our associated class loader.
+	 * 
+	 * @throws LifecycleException
+	 */
 	@Override
 	public void stop() throws LifecycleException {
-		// TODO Auto-generated method stub
 		
+		//Validate and update current component state
+		if(!started){
+			throw new LifecycleException(sm.getString("webappLoader.noStarted"));
+		}
+		if(debug >= 1){
+			log(sm.getString("webappLoader.stopping"));
+		}
+		lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+		started = false;
+		
+		
+		//Stop our background thread if we are reloadable
+		if(reloadable){
+			this.threadStop();
+		}
+		
+		//Remove context attributes as approperate
+		if(container instanceof Context){
+			ServletContext servletContext = ((Context)container).getServletContext();
+			servletContext.removeAttribute(Globals.CLASS_PATH_ATTR);
+		}
+		
+		//Throw away our current class loader.
+		if(classLoader instanceof Lifecycle){
+			((Lifecycle) classLoader).stop();
+		}
+		DirContextURLStreamHandler.unbind(classLoader);
+		classLoader = null;
+	}
+	
+	private void setRepositories(){
+		
+		if(!(container instanceof Context)){
+			return;
+		}
+		ServletContext servletContext = ((Context)this.container).getServletContext();
+		if(servletContext == null){
+			return;
+		}
+		
+		//Loading the work directory
+		File workDir = (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
+		if(workDir == null){
+			return;
+		}
+		log(sm.getString("webappLoader.deploy", workDir.getAbsolutePath()));
+		
+		DirContext resources = container.getResources();
+		
+		//Setting up the class repository (WEB-INF/class) ,if it exists
+		String classPath = "/WEB-INF/classes";
+		DirContext classes = null;
+		
+		try {
+			Object object = resources.lookup(classPath);
+			if(object instanceof DirContext){
+				classes = (DirContext) object;
+			}
+		} catch (NamingException e) {
+			//silent catch: It's valid that no /WEB-INF/clsses collection exists
+		}
+		
+		if(classes != null){
+			
+			File classRepository = null;
+			
+			String absoluteClassPath = servletContext.getRealPath(classPath);
+			if(absoluteClassPath != null){
+				classRepository = new File(absoluteClassPath);
+			}else{
+				classRepository = new File(workDir, classPath);
+				classRepository.mkdir();
+				copyDir(classes, classRepository);
+			}
+			
+			log(sm.getString("webappLoader.classDeploy", classPath, classRepository.getAbsoluteFile()));
+			
+			//Adding the repository to the class loader
+			classLoader.addRepository(classPath + "/", classRepository) ;
+		}
+		
+		//setring up the JAR repository (/WEB-INF/lib), if it exists
+		String libPath = "/WEB-INF/lib";
+		
+		classLoader.setJarPath(libPath);
+		
+		DirContext libDir = null;
+		//Looking up directory /WEB-INF/lib in the context
+		try {
+			Object object = resources.lookup(libPath);
+			if(object instanceof DirContext){
+				libDir = (DirContext) object;
+			}
+		} catch (NamingException e) {
+			;
+		}
+		
+		if(libDir != null){
+			
+			boolean copyJars = false;
+			String absolteLibPath = servletContext.getRealPath(libPath);
+			
+			File destDir = null;
+			if(absolteLibPath != null){
+				destDir = new File(absolteLibPath);
+			}else{
+				copyJars = true;
+				destDir = new File(workDir, libPath);
+			}
+			
+			// Looking up directory /WEB-INF/lib in the context
+			
+			try {
+				NamingEnumeration<Binding> enums = resources.listBindings(libPath);
+				while(enums.hasMoreElements()){
+					Binding binding = enums.next();
+					String fileName = libPath + "/" + binding.getName();
+					if(!fileName.endsWith(".jar")){
+						continue;
+					}
+					
+					//Copy JAR in the work directory, always (the JAR file would get locked otherwise,
+					//which would make it impossible to update it or remove it at runtime)
+					File destFile = new File(destDir, binding.getName());
+					
+					log(sm.getString("webappLoader.jarDeploy", fileName, destFile.getAbsolutePath()));
+					
+					Resource jarResources = (Resource) binding.getObject();
+					if(copyJars){
+						if(!copy(jarResources.streamContent(), new FileOutputStream(destFile))){
+							continue;
+						}
+					}
+					
+					JarFile jarFile = new JarFile(destFile);
+					classLoader.addJar(fileName, jarFile,destFile);
+				}
+			
+			} catch (NamingException e) {
+				;		//Silent catch : it's valid that no /WEB-INF/lib directory exists
+			} catch (FileNotFoundException e) {	
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * Set the approciate context attribute for our class path.
+	 * This is required only bacause Jasper depends on it.
+	 */
+	private void setClassPath(){
+		
+		//Validate our current state information
+		if(!(container instanceof Context)){
+			return;
+		}
+		ServletContext servletContext = ((Context)container).getServletContext();
+		if(servletContext == null){
+			return;
+		}
+		
+		StringBuffer classpath = new StringBuffer();
+		
+		//Assemble the class path information from our class loader chain
+		ClassLoader loader = getClassLoader();
+		int layers = 0;
+		int n = 0;
+		while(layers < 3 && loader != null){
+			if(!(loader instanceof URLClassLoader)){
+				break;
+			}
+			URL[] repositories = ((URLClassLoader) loader).getURLs();
+			for (int i = 0; i < repositories.length; i++) {
+				String repository = repositories[i].toString();
+				if(repository.startsWith("file://")){
+					repository = repository.substring(7);
+				}else if(repository.startsWith("file:")){
+					repository = repository.substring(5);
+				}else if(repository.startsWith("jndi:")){
+					repository = servletContext.getRealPath(repository.substring(5));
+				}else{
+					continue;
+				}
+				if(repository == null){
+					continue;
+				}
+				if(n > 0){
+					classpath.append(File.pathSeparator);
+				}
+				classpath.append(repository);
+				n++;
+			}
+			loader = loader.getParent();
+			layers++;
+		}
+		
+		//Store the asembled class path a a servlet context attribute
+		servletContext.setAttribute(Globals.CLASS_PATH_ATTR, classpath.toString());
+	}
+	
+	/**
+	 * Configure associated class loader permissions.
+	 */
+	private void setPermissions(){
+		if(System.getSecurityManager() == null){
+			return;
+		}
+		if(!(container instanceof Context)){
+			return;
+		}
+		
+		//Tell the class loader the root of the context
+		ServletContext servletContext = ((Context) container).getServletContext();
+		
+		//Assigning permissions for the work directory
+		File workDir = (File) servletContext.getAttribute(Globals.WORK_DIR_ATTR);
+		if(workDir != null){
+			try{
+				String workDirPath = workDir.getCanonicalPath();
+				classLoader.addPermission(new FilePermission(workDirPath, "read,write"));
+				classLoader.addPermission(new FilePermission(workDirPath + File.separator + "-", "read,write,delete"));
+			}catch(IOException e){
+				;		//Ignore
+			}
+		}
+		
+		try {
+			URL rootURL = servletContext.getResource("/");
+			classLoader.addPermission(rootURL);
+			
+			String contextRoot = servletContext.getRealPath("/");
+			if(contextRoot != null){
+				try{
+					contextRoot = (new File(contextRoot).getCanonicalPath()) + File.separator;
+					classLoader.addPermission(contextRoot);
+				}catch (IOException e) {
+					;		//Ignore
+				}
+			}
+			
+			URL classesURL = servletContext.getResource("WEB-INF/classes/");
+			if(classesURL != null){
+				classLoader.addPermission(classesURL);
+			}
+			
+			URL libURL = servletContext.getResource("/WEB-INF/lib/");
+			if(libURL != null){
+				classLoader.addPermission(libURL);
+			}
+			
+			if(contextRoot != null){
+				if(libURL != null){
+					File rootDir = new File(contextRoot);
+					File libDir = new File(rootDir, "WEB-INF/lib/");
+					String path = null;
+					try {
+						path = libDir.getCanonicalPath() + File.separator;
+					} catch (IOException e) {
+						;
+					}
+					if(path != null){
+						classLoader.addPermission(path);
+					}
+				}
+			}else{
+				if(workDir != null){
+					if(libURL != null){
+						File libDir = new File(workDir, "WEB-INF/lib/");
+						String path = null;
+						try {
+							path = libDir.getCanonicalPath() + File.separator;
+						} catch (IOException e) {
+							;
+						}
+						classLoader.addPermission(path);
+					}
+					
+					if(classesURL != null){
+						File classesFile = new File(workDir, "WEB-INF/classes/");
+						String path = null;
+						try {
+							path = classesFile.getCanonicalPath() + File.separator;
+						} catch (IOException e) {
+							;
+						}
+						classLoader.addPermission(path);
+					}
+				}
+			}
+		} catch (MalformedURLException e) {
+			;
+		} 
+	}
+	
+	/**
+	 * Validate that the required optional packages for the application are actually present.
+	 * @throws LifecycleException
+	 */
+	@Deprecated
+	private void validatePackages() throws LifecycleException{
+		ClassLoader classLoader = getClassLoader();
+		if(classLoader instanceof WebappClassLoader){
+			
+			Extension[] available = ((WebappClassLoader) classLoader).findAvailable();
+			Extension[] required = ((WebappClassLoader) classLoader).findRequired();
+			
+			if(debug >= 1){
+				log("Optional Packages: available=" + available.length + ", required=" + required.length);
+			}
+			
+			for (int i = 0; i < required.length; i++) {
+				if(debug >= 1){
+					log("checking for required package " + required[i]);
+				}
+				boolean found = false;
+				for (int j = 0; j < available.length; j++) {
+					if(available[j].isCompatibleWith(required[i])){
+						found = true;
+						break;
+					}
+				}
+				if(!found){
+					throw new LifecycleException("Missing optional package " + required[i]);
+				}
+			}
+		}
+		
+		
+	}
+
+	/**
+	 * Copy a file to the specified temp directory. This is required only because
+	 * Jasper depends on it
+	 * @param is
+	 * @param os
+	 * @return
+	 */
+	private boolean copy(InputStream is, OutputStream os) {
+		try{
+			byte[] buf = new byte[4096];
+			while(true){
+				int len = is.read(buf);
+				if(len < 0){
+					break;
+				}
+				os.write(buf, 0, len);
+			}
+			is.close();
+			os.close();
+		}catch(IOException e){
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Copy directory
+	 * 
+	 * @param classes
+	 * @param classRepository
+	 */
+	private boolean copyDir(DirContext srcDir, File destDir) {
+		try {
+			NamingEnumeration<NameClassPair> enums = srcDir.list("");
+			while(enums.hasMoreElements()){
+				NameClassPair ncPair = enums.nextElement();
+				String name = ncPair.getName();
+				Object object = srcDir.lookup(name);
+				File currentFile = new File(destDir, name);
+				if(object instanceof Resource){
+					InputStream is = ((Resource) object).streamContent();
+					OutputStream os = new FileOutputStream(currentFile);
+					if(!copy(is, os)){
+						return false;
+					}
+				}else if(object instanceof InputStream){
+					OutputStream os = new FileOutputStream(currentFile);
+					if(!copy((InputStream) object, os)){
+						return false;
+					}
+				}else if(object instanceof DirContext){
+					currentFile.mkdir();
+					copyDir((DirContext) object, currentFile);
+				}
+				
+			}
+		} catch (NamingException e) {
+			return false;
+		} catch (IOException e) {
+			return false;
+		}
+		return true;
 	}
 
 	public int getCheckInterval() {
@@ -478,5 +928,28 @@ public class WebappLoader implements Loader,Lifecycle,PropertyChangeListener,Run
 		return sb.toString();
 	}
 	
+	
+	
+	// -----------------------------------WebappContextNotifier Inner Class ------------------
+	
+	
+	/**
+	 * Private thread class to notify our associated Context that we are have recognized the need for a reload.
+	 * 
+	 * @author thewangzl
+	 *
+	 */
+	protected class WebappContextNotifier implements Runnable{
+
+		/**
+		 * Perfrom the requested notification
+		 */
+		@Override
+		public void run() {
+
+			((Context)container).reload();
+		}
+		
+	}
 }
 

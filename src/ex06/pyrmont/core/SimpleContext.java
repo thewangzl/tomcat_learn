@@ -456,5 +456,41 @@ public class SimpleContext implements Context, Pipeline, Lifecycle {
 		
 	}
 
+	@Override
+	public void reload() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setPath(String path) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getConfigured() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setConfigured(boolean configured) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getDocBase() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setDocBase(String docBase) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

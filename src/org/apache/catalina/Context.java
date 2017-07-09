@@ -12,6 +12,8 @@ public interface Context extends Container{
 
 	String getPath();
 	
+	void setPath(String path);
+	
 	/**
 	 * Add a new servlet mapping, relacing any existing mapping for the specified pattern.
 	 * 
@@ -45,4 +47,31 @@ public interface Context extends Container{
 	
 	
 	public void setReloadable(boolean reloadable);
+
+	/**
+	 * Reload this web application, if reloading is supported.
+	 * 
+	 */
+	void reload();
+	
+	/**
+	 * Return the "correctly configured" flag for this Context
+	 * 
+	 * @return
+	 */
+	boolean getConfigured();
+
+	/**
+	 * Set the "correctly configured" flag for this Context. This can be set to false  by startup
+	 * listeners that detect a fatal configuration error to avoid application from being made available.
+	 * 
+	 * @param configured
+	 */
+	void setConfigured(boolean configured);
+	
+	
+	String getDocBase();
+	
+	void setDocBase(String docBase);
+	
 }
