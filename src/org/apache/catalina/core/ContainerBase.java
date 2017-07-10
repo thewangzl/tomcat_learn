@@ -789,7 +789,7 @@ public abstract class ContainerBase implements Container, Lifecycle, Pipeline {
 		
 	}
 	
-	private void log(String message, Throwable throwable) {
+	protected void log(String message, Throwable throwable) {
 
 		Logger logger = getLogger();
 		if(logger != null){

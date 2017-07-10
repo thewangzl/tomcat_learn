@@ -18,6 +18,7 @@ import org.apache.catalina.ContainerServlet;
 import org.apache.catalina.Context;
 import org.apache.catalina.InstanceEvent;
 import org.apache.catalina.InstanceListener;
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Loader;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.HttpRequestBase;
@@ -26,6 +27,12 @@ import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.InstanceSupport;
 import org.apache.tomcat.util.log.SystemLogHandler;
 
+
+/**
+ * 
+ * @author thewangzl
+ *
+ */
 public class StandardWrapper extends ContainerBase implements Wrapper, ServletConfig {
 	
 	//------------------------------------------ INstance variables
@@ -42,8 +49,6 @@ public class StandardWrapper extends ContainerBase implements Wrapper, ServletCo
 	 * the same instance, as well be true on a non-STM servlet.
 	 */
 	private int countAllocated = 0;
-	
-	private int debug;
 	
 	/**
 	 * The facade associated with this wrapper
@@ -121,7 +126,10 @@ public class StandardWrapper extends ContainerBase implements Wrapper, ServletCo
 	private static final String info = "org.apache.catalina.core.StandardWrapper/1.0";
 	
 	
-	//---------------------------------------------- ServletConfig methodss ---------------------------------
+	public StandardWrapper() {
+		super();
+		pipeline.setBasic(new StandardWrapperValve());
+	}
 	
 
 
@@ -268,6 +276,10 @@ public class StandardWrapper extends ContainerBase implements Wrapper, ServletCo
 		this.instanceSupport.addInstanceListener(listener);
 	}
 	
+	public void removeInstanceListener(InstanceListener listener){
+		this.instanceSupport.removeInstanceListener(listener);
+	}
+	
 	/**
 	 * Add a new security role reference record to the set of records for this servlet.
 	 * 
@@ -291,6 +303,13 @@ public class StandardWrapper extends ContainerBase implements Wrapper, ServletCo
 		synchronized (references) {
 			return references.keySet().toArray(new String[0]);
 		}
+	}
+	
+	public void removeSecurityReference(String name){
+		synchronized (references) {
+			references.remove(name);
+		}
+		fireContainerEvent("removeSecurityReference", name);
 	}
 	
 	/**
@@ -535,10 +554,97 @@ public class StandardWrapper extends ContainerBase implements Wrapper, ServletCo
 		return servlet;
 	}
 
-	
-	public void ubload() {
-		// TODO Auto-generated method stub
+	/**
+	 * Unload all initialized instances of this sevlet, after calling the <code>destroy()</code> method for each instance.
+	 * This can be used, for example, prior to shutting down the entire servlet engine, or prior to reloading all of the 
+	 * classes from the Loader associated with our Loader's repository.
+	 * @throws ServletException 
+	 * 
+	 */
+	public synchronized void unload() throws ServletException {
 		
+		//Nothing to do if we have never loaded the instance
+		if(!singleThreadModel && instance == null){
+			return;
+		}
+		unloading = true;
+		
+		//Loaf a while if the current instance is allocated 
+		//(possibly more than onece if non-STM)
+		if(countAllocated > 0){
+			int nRetries = 0;
+			while(nRetries < 10){
+				if(nRetries == 0){
+					log("Waiting for " + this.countAllocated + " instance(s) to be deallocated");
+				}
+				
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					;
+				}
+				nRetries++;
+			}
+		}
+		
+		ClassLoader oldCtxClassLoader = Thread.currentThread().getContextClassLoader();
+		ClassLoader classLoader = instance.getClass().getClassLoader();
+		
+		PrintStream out = System.out;
+		SystemLogHandler.startCapture();
+		
+		// Call the servlet destroy() method
+		try{
+			instanceSupport.fireInstanceEvent(InstanceEvent.BEFORE_DESTROY_EVENT, instance);
+			Thread.currentThread().setContextClassLoader(classLoader);
+			instance.destroy();
+			instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_DESTROY_EVENT, instance);
+		}catch(Throwable t){
+			instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_DESTROY_EVENT, instance, t);
+			instance = null;
+			instancePool = null;
+			nInstances = 0;
+			fireContainerEvent("unload", this);
+			unloading = false;
+			throw new ServletException(sm.getString("standardWrapper.destroyException", getName()));
+		}finally{
+			// restore the context ClassLoader
+			Thread.currentThread().setContextClassLoader(oldCtxClassLoader);
+			//Write captured output
+			String log = SystemLogHandler.stopCapture();
+			if(log != null && log.length() > 0){
+				if(getServletContext() != null){
+					getServletContext().log(log);
+				}else{
+					out.println(log);
+				}
+			}
+		}
+		
+		//Deregister the destroyed instance
+		instance = null;
+		
+		if(singleThreadModel && instancePool != null){
+			try{
+				Thread.currentThread().setContextClassLoader(classLoader);
+				while(!instancePool.isEmpty()){
+					instancePool.pop().destroy();
+				}
+			}catch(Throwable t){
+				instancePool = null;
+				nInstances = 0;
+				unloading = false;
+				fireContainerEvent("unload", this);
+				throw new ServletException(sm.getString("standardWraper.destroyException", getName()), t);
+			}finally{
+				//
+				Thread.currentThread().setContextClassLoader(oldCtxClassLoader);
+			}
+			instancePool = null;
+			nInstances = 0;
+		}
+		unloading = false;
+		fireContainerEvent("unload", this);
 	}
 
 	/**
@@ -581,6 +687,13 @@ public class StandardWrapper extends ContainerBase implements Wrapper, ServletCo
 		synchronized (parameters) {
 			return new Enumerator<>(parameters.keySet());
 		}
+	}
+	
+	public void removeInitParameter(String name){
+		synchronized (parameters) {
+			parameters.remove(name);
+		}
+		fireContainerEvent("removeInitParameter", name);
 	}
 
 	@Override
@@ -655,5 +768,54 @@ public class StandardWrapper extends ContainerBase implements Wrapper, ServletCo
 			}
 		}
 		return true;
+	}
+	
+	@Override
+	protected String logName() {
+		StringBuffer sb = new StringBuffer("StandardWrapper[");
+		if(getParent() != null){
+			sb.append(getParent().getName());
+		}else{
+			sb.append("null");
+		}
+		sb.append(":").append(getName()).append("]");
+		return sb.toString();
+	}
+	
+	 /**
+     * Return a String representation of this component.
+     */
+	@Override
+    public String toString() {
+
+        StringBuffer sb = new StringBuffer();
+        if (getParent() != null) {
+            sb.append(getParent().toString());
+            sb.append(".");
+        }
+        sb.append("StandardWrapper[");
+        sb.append(getName());
+        sb.append("]");
+        return (sb.toString());
+
+    }
+	
+	@Override
+	public synchronized void start() throws LifecycleException {
+		
+		//Start up this component
+		super.start();
+	}
+	
+	@Override
+	public void stop() throws LifecycleException {
+		//Shut down our servlet instance (if it has been initialzed)
+		try {
+			this.unload();
+		} catch (ServletException e) {
+			log(sm.getString("standardWrapper.unloadException", getName()), e);
+		}
+		//Shut down this component
+		super.stop();
 	}
 }

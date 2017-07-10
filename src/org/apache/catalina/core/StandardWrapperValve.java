@@ -177,7 +177,7 @@ public class StandardWrapperValve extends ValveBase {
 		// unload it and release this instance
 		try{
 			if(servlet != null && wrapper.getAvailable() == Long.MAX_VALUE){
-				wrapper.ubload();
+				wrapper.unload();
 			}
 		}catch(Throwable e){
 			log(sm.getString("standardWrrapper.unloadException", wrapper.getName()), e);
