@@ -74,4 +74,18 @@ public interface Context extends Container{
 	
 	void setDocBase(String docBase);
 	
+	boolean getAvailable();
+	
+	void setAvailable(boolean available);
+	
+	/**
+	 * Return the privileged flag for this web application
+	 * 
+	 * @return
+	 */
+	boolean getPrivileged();
+	
+	
+	void setPrivileged(boolean privileged);
+	
 }

@@ -178,7 +178,7 @@ public class SimpleContainer implements Container {
 	}
 
 	@Override
-	public ContainerListener findContainerListeners() {
+	public ContainerListener[] findContainerListeners() {
 		// TODO Auto-generated method stub
 		return null;
 	}

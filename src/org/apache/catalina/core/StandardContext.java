@@ -4,6 +4,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 
 import javax.naming.directory.DirContext;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
@@ -18,6 +19,7 @@ import org.apache.catalina.Mapper;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
+import org.apache.catalina.deploy.FilterMap;
 
 public class StandardContext implements Context {
 
@@ -162,7 +164,7 @@ public class StandardContext implements Context {
 	}
 
 	@Override
-	public ContainerListener findContainerListeners() {
+	public ContainerListener[] findContainerListeners() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -309,5 +311,39 @@ public class StandardContext implements Context {
 	public String getInfo() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean getAvailable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setAvailable(boolean available) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public FilterMap[] findFilterMaps() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public FilterConfig findFilterConfig(String filterName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean getPrivileged() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setPrivileged(boolean privileged) {
+		// TODO Auto-generated method stub
+		
 	}
 }

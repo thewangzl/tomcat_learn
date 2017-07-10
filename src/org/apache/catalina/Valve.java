@@ -6,11 +6,6 @@ import javax.servlet.ServletException;
 
 public interface Valve {
 
-	/**
-	 * Return descriptive information about this Valve implementation
-	 * @return
-	 */
-	public String getInfo();
 	
 	/**
 	 * <p> Perform request processing as required by this valve</p>
@@ -24,4 +19,10 @@ public interface Valve {
 	 */
 	public void invoke(Request request, Response response,ValveContext context) throws IOException, ServletException;
 	
+	
+	/**
+	 * Return descriptive information about this Valve implementation
+	 * @return
+	 */
+	public String getInfo();
 }

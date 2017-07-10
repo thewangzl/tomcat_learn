@@ -25,4 +25,7 @@ public class Globals {
 	 * (as an object of type String),delimited with the appropriate path delimiter for this platform.
 	 */
 	public static final String CLASS_PATH_ATTR = "org.apache.catalina.jsp_classpath";
+
+	
+	public static final String JSP_FILE_ATTR = "org.apache.catalina.jsp_file";
 }

@@ -255,7 +255,7 @@ public class SimpleWrapper implements Wrapper,Pipeline, Lifecycle {
 		return null;
 	}
 	@Override
-	public ContainerListener findContainerListeners() {
+	public ContainerListener[] findContainerListeners() {
 		return null;
 	}
 	@Override

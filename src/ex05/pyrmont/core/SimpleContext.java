@@ -115,7 +115,7 @@ public class SimpleContext implements Context, Pipeline {
 	}
 
 	@Override
-	public ContainerListener findContainerListeners() {
+	public ContainerListener[] findContainerListeners() {
 
 		return null;
 	}
@@ -387,6 +387,30 @@ public class SimpleContext implements Context, Pipeline {
 
 	@Override
 	public void setDocBase(String docBase) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getAvailable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setAvailable(boolean available) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getPrivileged() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setPrivileged(boolean privileged) {
 		// TODO Auto-generated method stub
 		
 	}

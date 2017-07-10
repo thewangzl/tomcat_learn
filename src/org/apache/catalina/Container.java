@@ -73,7 +73,7 @@ public interface Container {
 	
 	public Container[] findChildren();
 	
-	public ContainerListener findContainerListeners();
+	public ContainerListener[] findContainerListeners();
 	
 	public Mapper findMapper(String protocol);
 	
