@@ -28,4 +28,10 @@ public class Globals {
 
 	
 	public static final String JSP_FILE_ATTR = "org.apache.catalina.jsp_file";
+
+	/**
+	 * The request attribute under which we forward a Java exception
+	 * (as an object of type Throwable) to an error page.
+	 */
+	public static final String EXCEPTION_ATTR = "javax.servlet.error.exception";
 }

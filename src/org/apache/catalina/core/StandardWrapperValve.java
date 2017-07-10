@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
+import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.ValveContext;
@@ -26,6 +27,7 @@ import org.apache.catalina.valves.ValveBase;
  */
 public class StandardWrapperValve extends ValveBase {
 
+	protected static final String info = "org.apache.catalina.core.StandardWrapperValve/1.0";
 	
 	@Override
 	public void invoke(Request request, Response response, ValveContext context) throws IOException, ServletException {
@@ -336,17 +338,72 @@ public class StandardWrapperValve extends ValveBase {
 
 		return servletName.equals(filterMap.getServletName());
 	}
-
+	
+	/**
+	 * 
+	 * @param message
+	 */
 	private void log(String message){
-		
+		Logger logger = null;
+        if (container != null)
+            logger = container.getLogger();
+        if (logger != null)
+            logger.log("StandardWrapperValve[" + container.getName() + "]: "
+                       + message);
+        else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println("StandardWrapperValve[" + containerName
+                               + "]: " + message);
+        }
 	}
 	
-	private void log(String message, Throwable e){
-		
+	/**
+	 * 
+	 * @param message
+	 * @param throwable
+	 */
+	private void log(String message, Throwable throwable){
+		Logger logger = null;
+        if (container != null)
+            logger = container.getLogger();
+        if (logger != null)
+            logger.log("StandardWrapperValve[" + container.getName() + "]: "
+                       + message, throwable);
+        else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println("StandardWrapperValve[" + containerName
+                               + "]: " + message);
+            System.out.println("" + throwable);
+            throwable.printStackTrace(System.out);
+        }
 	}
 	
-	private void exception(Request request, Response response, Throwable e){
+	/**
+	 * Handle the specified ServletException encountered while processing the specified Request
+	 * to produce the specified Response. And exceptions  that occur during generation of the 
+	 * exception report are logged and swallowed.
+	 * 
+	 * @param request
+	 * @param response
+	 * @param e
+	 */
+	private void exception(Request request, Response response, Throwable exception){
+		ServletRequest sreq = request.getRequest();
+		sreq.setAttribute(Globals.EXCEPTION_ATTR, exception);
 		
+		ServletResponse sresp = response.getResponse();
+		if(sresp instanceof HttpServletResponse){
+			((HttpServletResponse) sresp).setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@Override
+	public String getInfo() {
+		return info;
 	}
 
 }

@@ -12,6 +12,15 @@ import org.apache.catalina.Valve;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.util.StringManager;
 
+/**
+ * Convenience base class for implementations of the <b>Valve</b> Interface. A subclass 
+ * <strong>MUST</strong> implement an <code>invoke()</code> method to provide the required 
+ * funtionality, and <strong>MAY</strong> implement the <code>Lifecycle</code> interface 
+ * to provide configuration management and lifecycle support.
+ * 
+ * @author thewangzl
+ *
+ */
 public abstract class ValveBase implements Contained, Valve {
 
 	protected Container container;
@@ -36,12 +45,6 @@ public abstract class ValveBase implements Contained, Valve {
 	}
 
 	@Override
-	public void invoke(Request request, Response response, ValveContext context) throws IOException, ServletException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public String getInfo() {
 		return info;
 	}
@@ -53,4 +56,11 @@ public abstract class ValveBase implements Contained, Valve {
 	public void setDebug(int debug) {
 		this.debug = debug;
 	}
+	
+	/**
+	 * 
+	 */
+	@Override
+	public abstract void invoke(Request request, Response response, ValveContext context) throws IOException, ServletException;
+
 }
