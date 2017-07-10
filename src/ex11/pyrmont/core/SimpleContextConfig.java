@@ -1,4 +1,4 @@
-package ex11.pyrmont.startup;
+package ex11.pyrmont.core;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
