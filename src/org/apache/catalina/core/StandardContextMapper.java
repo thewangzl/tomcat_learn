@@ -52,8 +52,11 @@ public final class StandardContextMapper implements Mapper {
 		}
 		
 		//Identify the context-relative URI to be mapped
+		
 		String contextPath = ((HttpServletRequest) request.getRequest()).getContextPath();
-		contextPath = "/myApp";
+		if(contextPath == null || contextPath.length() == 0	){
+			contextPath = context.getPath();
+		}
 //		String requestURI = ((HttpRequest) request).getDecodedRequestURI();
 		String requestURI =  ((HttpServletRequest) request.getRequest()).getRequestURI();
 		String relativeURI = requestURI.substring(contextPath.length());

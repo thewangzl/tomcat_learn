@@ -22,6 +22,8 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Logger;
+import org.apache.catalina.Request;
+import org.apache.catalina.Response;
 import org.apache.catalina.util.LifecycleSupport;
 import org.apache.catalina.util.RequestUtil;
 import org.apache.catalina.util.ServerInfo;
@@ -232,6 +234,7 @@ public final class HttpProcessor implements Lifecycle, Runnable {
 		while(!stopped && ok && keepAlive){
 			finishResponse = true;
 			try{
+				
 				request.setStream(input);
 				request.setResponse(response);
 				output = socket.getOutputStream();
@@ -294,6 +297,7 @@ public final class HttpProcessor implements Lifecycle, Runnable {
 				//Ask our Container to proess this request
 				((HttpServletResponse) response).setHeader("Date", FastHttpDateFormat.getCurrentDate());
 				if(ok){
+					//TODO
 					connector.getContainer().invoke(request, response);
 				}
 			}catch(InterruptedIOException e){
@@ -373,6 +377,10 @@ public final class HttpProcessor implements Lifecycle, Runnable {
 		}catch(IOException e){
 			;
 		}
+	}
+	
+	private void postParseRequest(Request request, Response response){
+		//TODO
 	}
 	
 	protected void shutdownInput(InputStream input) {

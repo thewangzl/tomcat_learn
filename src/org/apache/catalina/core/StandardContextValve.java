@@ -34,6 +34,9 @@ public class StandardContextValve extends ValveBase{
 		//Disallow any direct access to resources under WEB-INF or META-INF
 		HttpServletRequest  hreq = (HttpServletRequest) request.getRequest();
 		String contextPath = hreq.getContextPath();
+		if(contextPath == null || contextPath.length() == 0	){
+			contextPath = ((Context)getContainer()).getPath();
+		}
 //		String requestURI = ((HttpRequest)request).getDecodedRequestURI();
 		String requestURI = hreq.getRequestURI();
 		String relativeURI = requestURI.substring(contextPath.length()).toUpperCase();
