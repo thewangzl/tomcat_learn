@@ -74,6 +74,7 @@ public class RequestFacade implements ServletRequest {
 	}
 
 	@Override
+	@SuppressWarnings("rawtypes")
 	public Map getParameterMap() {
 		return request.getParameterMap();
 	}
@@ -99,6 +100,7 @@ public class RequestFacade implements ServletRequest {
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public String getRealPath(String arg0) {
 		return request.getRealPath(arg0);
 	}

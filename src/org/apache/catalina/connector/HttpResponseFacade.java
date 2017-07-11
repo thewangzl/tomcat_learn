@@ -3,7 +3,6 @@ package org.apache.catalina.connector;
 import java.io.IOException;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.HttpResponse;
@@ -68,6 +67,7 @@ public final class HttpResponseFacade extends ResponseFacade implements HttpServ
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public String encodeRedirectUrl(String url) {
 		return ((HttpServletResponse) servletResponse).encodeRedirectUrl(url);
 	}
@@ -78,6 +78,7 @@ public final class HttpResponseFacade extends ResponseFacade implements HttpServ
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public String encodeUrl(String url) {
 		return ((HttpServletResponse) servletResponse).encodeUrl(url);
 	}
@@ -150,6 +151,7 @@ public final class HttpResponseFacade extends ResponseFacade implements HttpServ
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void setStatus(int sc, String msg) {
 		if(isCommitted()){
 			return;

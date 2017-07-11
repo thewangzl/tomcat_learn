@@ -42,6 +42,7 @@ public final class HttpProcessor implements Lifecycle, Runnable {
 	
 	private HttpConnector connector;
 	
+	@SuppressWarnings("unused")
 	private int id;
 	
 	private HttpRequestImpl request;
@@ -80,6 +81,7 @@ public final class HttpProcessor implements Lifecycle, Runnable {
 	/**
 	 * The match string for idenfying a session ID parameter.
 	 */
+	@SuppressWarnings("unused")
 	private static final char[] SESSION_ID = match.toCharArray();
 	
 	/**
@@ -94,7 +96,7 @@ public final class HttpProcessor implements Lifecycle, Runnable {
 	
 	private static final byte[] ack = (new String("HTTP/1.1 100 Continue\r\n\r\n")).getBytes();
 	
-	private static final byte[] CRLF = (new String("\r\n")).getBytes();
+//	private static final byte[] CRLF = (new String("\r\n")).getBytes();
 	
 	/**
 	 * Request line buffer

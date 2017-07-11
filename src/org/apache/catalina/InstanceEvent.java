@@ -15,6 +15,7 @@ import javax.servlet.ServletResponse;
  * @author thewangzl
  *
  */
+@SuppressWarnings("serial")
 public final class InstanceEvent extends EventObject {
 
 	// ---------------------------------------Manifest Constants

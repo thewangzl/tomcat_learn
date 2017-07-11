@@ -66,6 +66,7 @@ public class HttpResponseFacade extends ResponseFacade implements HttpServletRes
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public String encodeRedirectUrl(String url) {
 		return ((HttpServletResponse) servletResponse).encodeRedirectUrl(url);
 	}
@@ -76,6 +77,7 @@ public class HttpResponseFacade extends ResponseFacade implements HttpServletRes
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public String encodeUrl(String url) {
 		return ((HttpServletResponse) servletResponse).encodeUrl(url);
 	}
@@ -144,6 +146,7 @@ public class HttpResponseFacade extends ResponseFacade implements HttpServletRes
 	}
 
 	@Override
+	@SuppressWarnings("deprecation")
 	public void setStatus(int sc, String msg) {
 		if(isCommitted()){
 			return;

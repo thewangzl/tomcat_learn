@@ -5,6 +5,7 @@ import java.text.FieldPosition;
 import java.text.ParsePosition;
 import java.util.Date;
 
+@SuppressWarnings("serial")
 public class FastHttpDateFormat  extends DateFormat{
 
 	DateFormat df;

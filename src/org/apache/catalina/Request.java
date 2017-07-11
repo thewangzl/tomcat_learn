@@ -111,7 +111,7 @@ public interface Request {
 	 */
 	public Object getNote(String name);
 	
-	public Iterator getNoteNames();
+	public Iterator<String> getNoteNames();
 	
 	public void removeNote(String name);
 	

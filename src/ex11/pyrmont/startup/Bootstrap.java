@@ -45,7 +45,10 @@ public class Bootstrap {
 		context.addServletMapping("/Modern", "Modern");
 		
 		Logger logger = new SystemOutLogger();
+		logger.setVerbosity(3);
 		context.setLogger(logger);
+		
+		((StandardContext)context).setDebug(4);
 		
 		connector.setContainer(context);
 		

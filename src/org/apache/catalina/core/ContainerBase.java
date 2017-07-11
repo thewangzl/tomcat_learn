@@ -73,7 +73,7 @@ public abstract class ContainerBase implements Container, Lifecycle, Pipeline {
 	/**
 	 * The Java class name of the default Mapper class for this Container.
 	 */
-	protected String mappClass;
+	protected String mapperClass;
 	
 	/**
 	 * The human-readable name of this Container
@@ -164,7 +164,7 @@ public abstract class ContainerBase implements Container, Lifecycle, Pipeline {
 		//
 		lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
 		
-		this.addDefaultMapper(this.mappClass);
+		this.addDefaultMapper(this.mapperClass);
 		started = true;
 		
 		//Start our subodinate components, if any

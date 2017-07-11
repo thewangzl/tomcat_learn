@@ -91,6 +91,7 @@ public class SocketInputStream extends InputStream {
 		
 		//reading the method name
 		int maxRead = requestLine.method.length;
+		@SuppressWarnings("unused")
 		int readStart = pos;
 		int readCount = 0;
 		
@@ -228,6 +229,7 @@ public class SocketInputStream extends InputStream {
 		}
 		//Reading the header name
 		int maxRead = header.name.length;
+		@SuppressWarnings("unused")
 		int readStart = pos;
 		int readCount = 0;
 		
@@ -272,6 +274,7 @@ public class SocketInputStream extends InputStream {
 		readStart = pos;
 		readCount = 0;
 		
+		@SuppressWarnings("unused")
 		int crPos = -2;
 		boolean eol = false;
 		boolean validLine = true;

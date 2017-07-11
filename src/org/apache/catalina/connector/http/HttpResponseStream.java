@@ -15,9 +15,9 @@ import org.apache.catalina.connector.ResponseStream;
  */
 public final class HttpResponseStream extends ResponseStream {
 
-	private static final int MAX_CHUNK_SIZE = 4096;
+//	private static final int MAX_CHUNK_SIZE = 4096;
 	
-	private static final String CRLF = "\r\n";
+//	private static final String CRLF = "\r\n";
 	
 	/**
 	 * True of chunking is allowed

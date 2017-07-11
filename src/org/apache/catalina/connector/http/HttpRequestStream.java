@@ -207,6 +207,7 @@ public class HttpRequestStream extends RequestStream {
 				nRead += currentRead;
 			}
 			//Skipping the CRLF
+			@SuppressWarnings("unused")
 			String blank = readLineFromStream();
 		}
 		

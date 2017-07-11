@@ -2,6 +2,7 @@ package org.apache.catalina;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 
 public interface Wrapper extends Container {
 
@@ -34,6 +35,43 @@ public interface Wrapper extends Container {
 	 * @throws ServletException
 	 */
 	public void load() throws ServletException;
+
+	void unavailable(UnavailableException unavailable);
+
+	String getJspFile();
+
+	void setJspFile(String jspFile);
+
+	int getLoadOnStartup();
+
+	void setLoadOnStartup(int loadOnStartup);
+
+	void removeSecurityReference(String name);
+
+	void removeInstanceListener(InstanceListener listener);
+
+	void removeInitParameter(String name);
+
+	String findInitParameter(String name);
+
+	String[] findInitParameters();
+
+	void addSecurityReference(String name, String link);
+
+	void addInstanceListener(InstanceListener listener);
+
+	void addInitParameter(String name, String value);
+
+	String getRunAs();
+
+	void setRunAs(String runAs);
+
+	boolean isUnavailable();
+
+	long getAvailable();
+
+	void setAvailable(long available);
+
 	
 	
 }

@@ -6,10 +6,12 @@ import java.io.IOException;
 import javax.naming.directory.DirContext;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
+import javax.servlet.UnavailableException;
 
 import org.apache.catalina.Cluster;
 import org.apache.catalina.Container;
 import org.apache.catalina.ContainerListener;
+import org.apache.catalina.InstanceListener;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.LifecycleListener;
@@ -367,6 +369,114 @@ public class SimpleWrapper implements Wrapper, Pipeline, Lifecycle {
 		
 		// 
 		lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
+	}
+
+	@Override
+	public void unavailable(UnavailableException unavailable) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getJspFile() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setJspFile(String jspFile) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getLoadOnStartup() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setLoadOnStartup(int loadOnStartup) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeSecurityReference(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeInstanceListener(InstanceListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeInitParameter(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String findInitParameter(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] findInitParameters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addSecurityReference(String name, String link) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addInstanceListener(InstanceListener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addInitParameter(String name, String value) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getRunAs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setRunAs(String runAs) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isUnavailable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public long getAvailable() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setAvailable(long available) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

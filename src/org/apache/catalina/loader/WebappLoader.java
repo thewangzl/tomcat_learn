@@ -60,7 +60,7 @@ public class WebappLoader implements Loader,Lifecycle,PropertyChangeListener,Run
 	
 	private DefaultContext defaultContext;
 	
-	private boolean modified;
+//	private boolean modified;
 	
 	private String[] repositories = new String[0];
 	
@@ -662,6 +662,7 @@ public class WebappLoader implements Loader,Lifecycle,PropertyChangeListener,Run
 	 * @param classes
 	 * @param classRepository
 	 */
+	@SuppressWarnings("resource")
 	private boolean copyDir(DirContext srcDir, File destDir) {
 		try {
 			NamingEnumeration<NameClassPair> enums = srcDir.list("");
@@ -851,6 +852,7 @@ public class WebappLoader implements Loader,Lifecycle,PropertyChangeListener,Run
 		if(!(event.getSource() instanceof Context)){
 			return;
 		}
+		@SuppressWarnings("unused")
 		Context context = (Context) event.getSource();
 		
 		//Process a relevant property change

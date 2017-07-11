@@ -3,6 +3,11 @@ package org.apache.catalina;
 import javax.servlet.ServletContext;
 
 public interface Context extends Container{
+	
+	/**
+	 * The lifecycleEvent type sent when a context is reloaded.
+	 */
+	public static final String RELOAD_EVENT = "reload";
 
 	ServletContext getServletContext();
 

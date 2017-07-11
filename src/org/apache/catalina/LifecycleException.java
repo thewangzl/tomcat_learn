@@ -1,5 +1,6 @@
 package org.apache.catalina;
 
+@SuppressWarnings("serial")
 public class LifecycleException extends Exception {
 
 	/**

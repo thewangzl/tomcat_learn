@@ -126,6 +126,7 @@ public final class HttpRequestFacade extends RequestFacade implements HttpServle
 		return ((HttpServletRequest)request).isRequestedSessionIdFromURL();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isRequestedSessionIdFromUrl() {
 		return ((HttpServletRequest)request).isRequestedSessionIdFromUrl();

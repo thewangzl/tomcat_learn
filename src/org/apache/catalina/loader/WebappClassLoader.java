@@ -1287,6 +1287,7 @@ public class WebappClassLoader extends URLClassLoader implements Reloader,Lifecy
 	 * 
 	 * @return
 	 */
+	@SuppressWarnings("resource")
 	public Extension[] findAvailable() {
 
 		//Initialized the results with our local available extensions
@@ -1315,6 +1316,7 @@ public class WebappClassLoader extends URLClassLoader implements Reloader,Lifecy
 		return results.toArray(new Extension[results.size()]);
 	}
 
+	@SuppressWarnings("resource")
 	public Extension[] findRequired() {
 		//Initialized the results with our local available extensions
 		ArrayList<Extension> results = new ArrayList<>();
@@ -1575,6 +1577,7 @@ public class WebappClassLoader extends URLClassLoader implements Reloader,Lifecy
 	 * @return
 	 * @throws MalformedURLException
 	 */
+	@SuppressWarnings("deprecation")
 	private URL getURL(File file) throws MalformedURLException {
 		File realFile = file;
 		try {

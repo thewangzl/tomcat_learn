@@ -10,6 +10,11 @@ import org.apache.catalina.Response;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.valves.ValveBase;
 
+/**
+ * 
+ * @author thewangzl
+ *
+ */
 public class StandardContextValve extends ValveBase{
 
 	@Override
