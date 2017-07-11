@@ -1,0 +1,34 @@
+2017-07-12 00:13:20 HttpConnector httpConnector.allAddress
+2017-07-12 00:13:20 HttpConnector[8080] httpConnector.starting
+2017-07-12 00:13:20 HttpProcessor[8080][0] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-12 00:13:20 HttpProcessor[8080][1] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-12 00:13:20 HttpProcessor[8080][2] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-12 00:13:20 HttpProcessor[8080][3] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-12 00:13:20 HttpProcessor[8080][4] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-12 00:13:20 WebappLoader[/myApp]:Deploying class repositories to work directory D:\workspaces\self\tomcat_learn\trunk\tomcat_learn\D:\workspaces\self\tomcat_learn\trunk\tomcat_learn
+2017-07-12 00:13:20 WebappLoader[/myApp]:Deploy class files /WEB-INF/classes to D:\workspaces\self\tomcat_learn\trunk\tomcat_learn\myApp\WEB-INF\classes
+2017-07-12 00:13:20 StandardContext[/myApp]: Servlet /myApp threw load() exception
+javax.servlet.ServletException: Servlet class Not found:PrimitiveServlet
+	at ex08.pyrmont.core.SimpleWrapper.loadServlet(SimpleWrapper.java:117)
+	at ex08.pyrmont.core.SimpleWrapper.load(SimpleWrapper.java:140)
+	at org.apache.catalina.core.StandardContext.loadOnStartup(StandardContext.java:1653)
+	at org.apache.catalina.core.StandardContext.start(StandardContext.java:1857)
+	at ex08.pyrmont.startup.Bootstrap.main(Bootstrap.java:73)
+
+2017-07-12 00:13:27 HttpProcessor[8080][4] An incoming request is being assigned
+2017-07-12 00:13:27 HttpProcessor[8080][4] The incoming request has been awaited
+2017-07-12 00:13:27 HttpProcessor[8080][4] parse Connection: address=/127.0.0.1, port=8080
+2017-07-12 00:13:27 HttpProcessor[8080][4] parse Connection: address=/127.0.0.1, port=8080
+2017-07-12 00:14:01 HttpConnector httpConnector.allAddress
+2017-07-12 00:14:01 HttpConnector[8080] httpConnector.starting
+2017-07-12 00:14:01 HttpProcessor[8080][0] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-12 00:14:01 HttpProcessor[8080][1] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-12 00:14:01 HttpProcessor[8080][2] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-12 00:14:01 HttpProcessor[8080][3] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-12 00:14:01 HttpProcessor[8080][4] Apache Tomcat learn by thewangzl (HTTP/1.1 Connector):httpProcessor.starting
+2017-07-12 00:14:01 Starting  context null
+2017-07-12 00:14:01 context started
+2017-07-12 00:14:05 HttpProcessor[8080][4] An incoming request is being assigned
+2017-07-12 00:14:05 HttpProcessor[8080][4] The incoming request has been awaited
+2017-07-12 00:14:05 HttpProcessor[8080][4] parse Connection: address=/127.0.0.1, port=8080
+2017-07-12 00:14:05 HttpProcessor[8080][4] parse Connection: address=/127.0.0.1, port=8080

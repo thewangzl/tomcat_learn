@@ -18,6 +18,7 @@ import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.ValveContext;
 import org.apache.catalina.deploy.FilterMap;
+import org.apache.catalina.util.StringManager;
 import org.apache.catalina.valves.ValveBase;
 
 /**
@@ -28,6 +29,8 @@ import org.apache.catalina.valves.ValveBase;
 public class StandardWrapperValve extends ValveBase {
 
 	protected static final String info = "org.apache.catalina.core.StandardWrapperValve/1.0";
+	
+	protected static final StringManager sm = StringManager.getManager(Constants.Package);
 	
 	@Override
 	public void invoke(Request request, Response response, ValveContext context) throws IOException, ServletException {

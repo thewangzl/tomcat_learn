@@ -28,6 +28,7 @@ public class StringManager {
 			tempBundle = ResourceBundle.getBundle(bundleName,Locale.getDefault());
 			
 		}catch(MissingResourceException e){
+			e.printStackTrace();
 			//
 			ClassLoader cl = Thread.currentThread().getContextClassLoader();
 			if(cl != null){
@@ -61,6 +62,7 @@ public class StringManager {
 		try{
 			str = bundle.getString(key);
 		}catch(MissingResourceException e){
+			e.printStackTrace();
 			str = "";
 		}
 		return str;

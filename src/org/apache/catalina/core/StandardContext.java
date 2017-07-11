@@ -1811,7 +1811,9 @@ public class StandardContext extends ContainerBase implements Context {
 				if(manager != null && manager instanceof Lifecycle){
 					((Lifecycle) manager).start();
 				}
-			}finally{
+			}catch(Exception e){
+            	e.printStackTrace();
+            }finally{
 				//Unbinding thrad
 				unbindThread(oldCCL);
 			}
@@ -2193,7 +2195,8 @@ public class StandardContext extends ContainerBase implements Context {
 		
 		oldContextClassLoader = null;
 		if(isUseNaming()){
-			ContextBindings.unbindClassLoader(this, this);
+			
+			ContextBindings.unbindThread(this, this);
 		}
 		
 		DirContextURLStreamHandler.unbind();

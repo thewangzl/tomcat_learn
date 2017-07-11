@@ -8,6 +8,7 @@ import org.apache.catalina.Loader;
 import org.apache.catalina.Logger;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.http.HttpConnector;
+import org.apache.catalina.core.ContainerBase;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.loader.WebappLoader;
@@ -48,8 +49,10 @@ public class Bootstrap {
 		logger.setVerbosity(3);
 		context.setLogger(logger);
 		
-		((StandardContext)context).setDebug(4);
-		
+		((ContainerBase)context).setDebug(4);
+		((ContainerBase) wrapper1).setDebug(4);
+		((ContainerBase) wrapper2).setDebug(4);
+
 		connector.setContainer(context);
 		
 		try {

@@ -501,6 +501,17 @@ public class StandardWrapper extends ContainerBase implements Wrapper, ServletCo
 				throw new ServletException(sm.getString("standardWrapper.missingClass", actualClass));
 			}
 			
+			// Instantiate and initialize an instance of the servlet class itself
+			try {
+				servlet = (Servlet) classClass.newInstance();
+			} catch (ClassCastException e) {
+				unavailable(null);
+				throw new ServletException(sm.getString("standardWrapper.notServlet", actualClass), e);
+			} catch (Throwable e) {
+				unavailable(null);
+				throw new ServletException(sm.getString("standardWrapper.instantiate", actualClass), e);
+			}
+			
 			//Check if loading the servlet in this web application should be allowed
 			if(!isServletAllowed(classClass)){
 				throw new ServletException(sm.getString("standardWrapper.privilegedServlet", actualClass));
@@ -538,6 +549,7 @@ public class StandardWrapper extends ContainerBase implements Wrapper, ServletCo
 				//so do not call unvailable(null).
 				throw e;
 			}catch(Throwable e){
+				e.printStackTrace();
 				instanceSupport.fireInstanceEvent(InstanceEvent.AFTER_INIT_EVENT, servlet, e);
 				//If the servlet wanted to be unvailable it would have said so, 
 				//so do not call unvailable(null).

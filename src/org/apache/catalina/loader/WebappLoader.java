@@ -47,7 +47,7 @@ public class WebappLoader implements Loader,Lifecycle,PropertyChangeListener,Run
 	
 	private WebappClassLoader classLoader;
 	
-	private String loaderClass = "org.apache.catalina.loader.WebappClasLoader";
+	private String loaderClass = "org.apache.catalina.loader.WebappClassLoader";
 	
 	private ClassLoader parentClassLoader;
 	
