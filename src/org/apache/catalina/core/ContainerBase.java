@@ -164,7 +164,7 @@ public abstract class ContainerBase implements Container, Lifecycle, Pipeline {
 		//
 		lifecycle.fireLifecycleEvent(BEFORE_START_EVENT, null);
 		
-		this.addDefaultMapper(this.mapperClass);
+		this.addDefaultMapper(this.getMapperClass());
 		started = true;
 		
 		//Start our subodinate components, if any
@@ -741,6 +741,10 @@ public abstract class ContainerBase implements Container, Lifecycle, Pipeline {
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 
 		support.removePropertyChangeListener(listener);
+	}
+	
+	public String getMapperClass() {
+		return mapperClass;
 	}
 	
 	protected void addDefaultMapper(String mapperClass){

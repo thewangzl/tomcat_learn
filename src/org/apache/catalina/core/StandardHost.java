@@ -137,7 +137,7 @@ public class StandardHost extends ContainerBase implements Host {
 		return mapperClass;
 	}
 	public void setMapperClass(String mapperClass) {
-		String oldMapperClass = this.mapperClass;
+		String oldMapperClass = mapperClass;
 		this.mapperClass = mapperClass;
 		support.firePropertyChange("mapperClass", oldMapperClass, this.mapperClass);
 	}
@@ -205,13 +205,14 @@ public class StandardHost extends ContainerBase implements Host {
 			results[i] = aliases[i];
 		}
 		results[aliases.length] = alias;
+		aliases = results;
 		
 		//Inform interested listeners
 		fireContainerEvent(ADD_ALIAS_EVENT, alias);
 	}
 
 	@Override
-	public String[] findAlias() {
+	public String[] findAliases() {
 
 		return this.aliases;
 	}
@@ -319,6 +320,7 @@ public class StandardHost extends ContainerBase implements Host {
 		
 		super.start();
 	}
+	
 
 	
 	@Override

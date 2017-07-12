@@ -80,7 +80,7 @@ public interface Host extends Container {
 	public void addAlias(String alias);
 	
 	
-	public String[] findAlias();
+	public String[] findAliases();
 	
 	
 	public void removeAlias(String alias);
