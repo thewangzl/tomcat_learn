@@ -21,6 +21,7 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
+import org.apache.catalina.deploy.ErrorPage;
 
 public class SimpleContext implements Context, Pipeline {
 	
@@ -413,6 +414,18 @@ public class SimpleContext implements Context, Pipeline {
 	public void setPrivileged(boolean privileged) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public ErrorPage findErrorPage(String exceptionType) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ErrorPage findErrorPage(int errorCode) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

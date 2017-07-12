@@ -17,7 +17,7 @@ public interface Valve {
 	 * @throws IOException
 	 * @throws ServletException
 	 */
-	public void invoke(Request request, Response response,ValveContext context) throws IOException, ServletException;
+	public void invoke(Request request, Response response,ValveContext valveContext) throws IOException, ServletException;
 	
 	
 	/**

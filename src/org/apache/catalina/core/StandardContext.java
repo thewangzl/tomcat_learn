@@ -877,6 +877,12 @@ public class StandardContext extends ContainerBase implements Context {
 		return constraints;
 	}
 	
+	@Override
+	public ErrorPage findErrorPage(int errorCode){
+		return statusPages.get(errorCode);
+	}
+	
+	@Override
 	public ErrorPage findErrorPage(String exceptionType){
 		synchronized (exceptionPages) {
 			return exceptionPages.get(exceptionType);

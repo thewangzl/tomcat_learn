@@ -70,6 +70,14 @@ public class Globals {
 	 * The request attribute under which we store the servlet name on named dispatcher request
 	 */
 	public static final String NAMED_DISPATCHER_ATTR = "org.apache.catalina.NAMED";
+
+	public static final String STATUS_CODE_ATTR = null;
+
+	public static final String ERROR_MESSAGE_ATTR = null;
+
+	public static final String SERVLET_NAME_ATTR = null;
+
+	public static final String EXCEPTION_PAGE_ATTR = null;
 	
 	
 	

@@ -320,6 +320,11 @@ public final class RequestUtil {
         return new String(bytes, 0, ox);
 
     }
+
+	public static String filter(String message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 	

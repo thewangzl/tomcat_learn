@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.Context;
 import org.apache.catalina.Globals;
 import org.apache.catalina.HttpRequest;
-import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.ValveContext;
@@ -342,48 +341,6 @@ public class StandardWrapperValve extends ValveBase {
 		return servletName.equals(filterMap.getServletName());
 	}
 	
-	/**
-	 * 
-	 * @param message
-	 */
-	private void log(String message){
-		Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log("StandardWrapperValve[" + container.getName() + "]: "
-                       + message);
-        else {
-            String containerName = null;
-            if (container != null)
-                containerName = container.getName();
-            System.out.println("StandardWrapperValve[" + containerName
-                               + "]: " + message);
-        }
-	}
-	
-	/**
-	 * 
-	 * @param message
-	 * @param throwable
-	 */
-	private void log(String message, Throwable throwable){
-		Logger logger = null;
-        if (container != null)
-            logger = container.getLogger();
-        if (logger != null)
-            logger.log("StandardWrapperValve[" + container.getName() + "]: "
-                       + message, throwable);
-        else {
-            String containerName = null;
-            if (container != null)
-                containerName = container.getName();
-            System.out.println("StandardWrapperValve[" + containerName
-                               + "]: " + message);
-            System.out.println("" + throwable);
-            throwable.printStackTrace(System.out);
-        }
-	}
 	
 	/**
 	 * Handle the specified ServletException encountered while processing the specified Request

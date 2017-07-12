@@ -6,4 +6,6 @@ public interface Manager {
 	
 	void setContainer(Container container);
 
+	Session findSession(String sessionId);
+
 }

@@ -2,6 +2,8 @@ package org.apache.catalina;
 
 import javax.servlet.ServletContext;
 
+import org.apache.catalina.deploy.ErrorPage;
+
 public interface Context extends Container{
 	
 	/**
@@ -92,5 +94,9 @@ public interface Context extends Container{
 	
 	
 	void setPrivileged(boolean privileged);
+
+	ErrorPage findErrorPage(String exceptionType);
+
+	ErrorPage findErrorPage(int errorCode);
 	
 }

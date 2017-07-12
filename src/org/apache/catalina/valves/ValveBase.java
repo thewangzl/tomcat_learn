@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 
 import org.apache.catalina.Contained;
 import org.apache.catalina.Container;
+import org.apache.catalina.Logger;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
@@ -61,6 +62,50 @@ public abstract class ValveBase implements Contained, Valve {
 	 * 
 	 */
 	@Override
-	public abstract void invoke(Request request, Response response, ValveContext context) throws IOException, ServletException;
+	public abstract void invoke(Request request, Response response, ValveContext valveContext) throws IOException, ServletException;
 
+	
+	/**
+	 * 
+	 * @param message
+	 */
+	protected void log(String message){
+		Logger logger = null;
+        if (container != null)
+            logger = container.getLogger();
+        if (logger != null)
+            logger.log(this.getClass().getSimpleName() +"[" + container.getName() + "]: "
+                       + message);
+        else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println(this.getClass().getSimpleName() +"[" + containerName
+                               + "]: " + message);
+        }
+	}
+	
+	/**
+	 * 
+	 * @param message
+	 * @param throwable
+	 */
+	protected void log(String message, Throwable throwable){
+		Logger logger = null;
+        if (container != null)
+            logger = container.getLogger();
+        if (logger != null)
+            logger.log(this.getClass().getSimpleName() +"[" + container.getName() + "]: "
+                       + message, throwable);
+        else {
+            String containerName = null;
+            if (container != null)
+                containerName = container.getName();
+            System.out.println(this.getClass().getSimpleName() +"[" + containerName
+                               + "]: " + message);
+            System.out.println("" + throwable);
+            throwable.printStackTrace(System.out);
+        }
+	}
+	
 }

@@ -10,4 +10,6 @@ public interface Session {
 	public boolean isValid();
 
 	public HttpSession getSession();
+
+	public void access();
 }

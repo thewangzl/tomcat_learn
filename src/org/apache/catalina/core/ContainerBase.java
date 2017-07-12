@@ -73,7 +73,7 @@ public abstract class ContainerBase implements Container, Lifecycle, Pipeline {
 	/**
 	 * The Java class name of the default Mapper class for this Container.
 	 */
-	protected String mapperClass;
+	protected String mapperClass = null;
 	
 	/**
 	 * The human-readable name of this Container

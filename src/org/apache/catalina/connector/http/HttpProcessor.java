@@ -246,7 +246,7 @@ public final class HttpProcessor implements Lifecycle, Runnable {
 				ok = false;
 			}
 			
-			//Parse the incoming requet
+			//Parse the incoming request
 			try{
 				if(ok){
 					parseConnection(socket);
@@ -297,7 +297,7 @@ public final class HttpProcessor implements Lifecycle, Runnable {
 				//Ask our Container to proess this request
 				((HttpServletResponse) response).setHeader("Date", FastHttpDateFormat.getCurrentDate());
 				if(ok){
-					//TODO
+					
 					connector.getContainer().invoke(request, response);
 				}
 			}catch(InterruptedIOException e){
