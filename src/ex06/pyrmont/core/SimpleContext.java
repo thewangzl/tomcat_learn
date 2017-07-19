@@ -529,5 +529,29 @@ public class SimpleContext implements Context, Pipeline, Lifecycle {
 		return null;
 	}
 
+	@Override
+	public Object[] getApplicationListeners() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setApplicationListeners(Object[] applicationListenersObjects) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getSessionTimeout() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setSessionTimeout(int timeout) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

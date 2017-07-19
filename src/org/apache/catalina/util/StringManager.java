@@ -62,6 +62,7 @@ public class StringManager {
 		try{
 			str = bundle.getString(key);
 		}catch(MissingResourceException e){
+			System.err.println(key);
 			e.printStackTrace();
 			str = "";
 		}

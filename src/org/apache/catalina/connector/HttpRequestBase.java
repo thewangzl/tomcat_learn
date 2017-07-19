@@ -2,6 +2,7 @@ package org.apache.catalina.connector;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.AccessController;
 import java.security.Principal;
 import java.security.PrivilegedAction;
 import java.text.ParseException;
@@ -103,24 +104,6 @@ public class HttpRequestBase extends RequestBase implements HttpRequest, HttpSer
 	@Override
 	public ServletRequest getRequest() {
 		return facade;
-	}
-
-	private HttpSession doGetSession(boolean create) {
-		// There cannot be a session if no context has been assigned yet
-		if (context == null) {
-			return null;
-		}
-		// Return the current session if it exists and is valid
-		if (session != null && !session.isValid()) {
-			return null;
-		}
-		if (session != null) {
-			return session.getSession();
-		}
-
-		// Return the requested session if it exists and its valid
-		// TODO
-		return session.getSession();
 	}
 
 	@Override
@@ -281,8 +264,63 @@ public class HttpRequestBase extends RequestBase implements HttpRequest, HttpSer
 
 	@Override
 	public HttpSession getSession(boolean create) {
-		// TODO Auto-generated method stub
-		return null;
+		if(System.getSecurityManager() != null){
+			PrivilegedAction<HttpSession> dp = new PrivilegedGetSession(create);
+			return AccessController.doPrivileged(dp);
+		}
+		return doGetSession(create);
+	}
+	
+	private HttpSession doGetSession(boolean create){
+		if(context == null){
+			return null;
+		}
+		
+		//Return the current session if it exists and is valid
+		if(session != null && !session.isValid()){
+			session = null;
+		}
+		if(session != null){
+			return session.getSession();
+		}
+		
+		Manager manager = null;
+		if(context != null){
+			manager = context.getManager();
+		}
+		if(manager == null){
+			return null;
+		}
+		
+		//Return the requested session if it exists and is valid
+		if(requestedSessionId != null){
+			try {
+				session = manager.findSession(requestedSessionId);
+			} catch (IOException e) {
+				session = null;
+			}
+			if(session != null && !session.isValid()){
+				session = null;
+			}
+			if(session != null){
+				return session.getSession();
+			}
+		}
+		
+		//Create a new session if requested and the response is not committed
+		if(!create){
+			return null;
+		}
+		if(context != null && response != null && context.getCookies() && response.getResponse().isCommitted()){
+			throw new IllegalStateException(sm.getString("httpRequestBase.createCommitted"));
+		}
+		
+		session = manager.createSession();
+		if(session != null){
+			return session.getSession();
+		}else{
+			return null;
+		}
 	}
 
 	@Override
@@ -608,4 +646,35 @@ public class HttpRequestBase extends RequestBase implements HttpRequest, HttpSer
 			return doGetSession(create);
 		}
 	}
+	
+	/**
+     * Release all object references, and initialize instance variables, in
+     * preparation for reuse of this object.
+     */
+    public void recycle() {
+
+        super.recycle();
+        authType = null;
+        contextPath = "";
+        cookies.clear();
+        headers.clear();
+        method = null;
+        if (parameters != null) {
+            parameters.setLocked(false);
+            parameters.clear();
+        }
+        parsed = false;
+        pathInfo = null;
+        queryString = null;
+        requestedSessionCookie = false;
+        requestedSessionId = null;
+        requestedSessionURL = false;
+        requestURI = null;
+        decodedRequestURI = null;
+        secure = false;
+        servletPath = null;
+        session = null;
+        userPrincipal = null;
+
+    }
 }

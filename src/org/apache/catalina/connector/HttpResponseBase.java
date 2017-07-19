@@ -793,6 +793,20 @@ public class HttpResponseBase extends ResponseBase implements HttpResponse, Http
 	}
 	
 	/**
+     * Release all object references, and initialize instance variables, in
+     * preparation for reuse of this object.
+     */
+    public void recycle() {
+
+        super.recycle();
+        cookies.clear();
+        headers.clear();
+        message = getStatusMessage(HttpServletResponse.SC_OK);
+        status = HttpServletResponse.SC_OK;
+
+    }
+	
+	/**
 	 * Clear any content written to the buffer. In addition, all cookies and headers
 	 * are cleared, and the status is reset.
 	 * 

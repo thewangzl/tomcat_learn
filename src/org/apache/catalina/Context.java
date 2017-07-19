@@ -98,5 +98,13 @@ public interface Context extends Container{
 	ErrorPage findErrorPage(String exceptionType);
 
 	ErrorPage findErrorPage(int errorCode);
+
+	Object[] getApplicationListeners();
+
+	void setApplicationListeners(Object[] applicationListenersObjects);
+
+	int getSessionTimeout();
+
+	void setSessionTimeout(int timeout);
 	
 }

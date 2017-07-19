@@ -25,6 +25,7 @@ import org.apache.catalina.Response;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.util.Enumerator;
 import org.apache.catalina.util.RequestUtil;
+import org.apache.catalina.util.StringManager;
 
 /**
  * Convenience base implementation of the <b>Request</b> interface, which can be userd for 
@@ -87,6 +88,8 @@ public abstract class RequestBase implements Request, ServletRequest {
 	protected ServletInputStream stream;
 	
 	protected Wrapper wrapper;
+	
+	protected static StringManager sm = StringManager.getManager(Constants.Package);
 	
 	@Override
 	public String getAuthorization() {

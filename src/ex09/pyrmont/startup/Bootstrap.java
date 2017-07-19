@@ -1,13 +1,10 @@
-package ex08.pyrmont.startup;
-
-import java.util.Iterator;
+package ex09.pyrmont.startup;
 
 import org.apache.catalina.Connector;
 import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
-import org.apache.catalina.Mapper;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.http.HttpConnector;
 import org.apache.catalina.core.StandardContext;
@@ -23,16 +20,14 @@ public class Bootstrap {
 
 	public static void main(String[] args) {
 
+
 		System.setProperty("catalina.base",System.getProperty("user.dir"));
 
 		Connector connector = new HttpConnector();
 		
 		Wrapper wrapper1 = new SimpleWrapper();
-		wrapper1.setName("Primitive");
-		wrapper1.setServletClass("PrimitiveServlet");
-		Wrapper wrapper2 = new SimpleWrapper();
-		wrapper2.setName("Modern");
-		wrapper2.setServletClass("ModernServlet");
+	    wrapper1.setName("Session");
+	    wrapper1.setServletClass("SessionServlet");
 		
 		
 		Context context = new StandardContext();
@@ -41,10 +36,8 @@ public class Bootstrap {
 		context.setDocBase("myApp");
 		
 		context.addChild(wrapper1);
-		context.addChild(wrapper2);
 		
-		context.addServletMapping("/Primitive", "Primitive");
-		context.addServletMapping("/Modern", "Modern");
+	    context.addServletMapping("/Session", "Session");
 		
 		LifecycleListener listener = new SimpleContextConfig();
 		((Lifecycle)context).addLifecycleListener(listener);
@@ -91,6 +84,6 @@ public class Bootstrap {
 
 	
 
+	
 	}
-
 }

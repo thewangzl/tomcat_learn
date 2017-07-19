@@ -2,7 +2,8 @@ package org.apache.catalina.core;
 
 import java.io.IOException;
 import java.security.AccessController;
-import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -66,21 +67,25 @@ public final class ApplicationFilterChain implements FilterChain {
 		if (System.getSecurityManager() != null) {
 			final ServletRequest req = request;
 			final ServletResponse resp = response;
-			AccessController.doPrivileged(new PrivilegedAction<Object>() {
-
-				@Override
-				public Object run(){
-					try {
-						// FIXME -- now exception cannot be throwed 
+			try {
+				AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+					@Override
+					public Object run() throws ServletException, IOException{
 						internalDoFilter(req, resp);
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (ServletException e) {
-						e.printStackTrace();
+						return null;
 					}
-					return null;
-				}
-			});
+				});
+			} catch (PrivilegedActionException pe) {
+				 Exception e = pe.getException();
+                if (e instanceof ServletException)
+                    throw (ServletException) e;
+                else if (e instanceof IOException)
+                    throw (IOException) e;
+                else if (e instanceof RuntimeException)
+                    throw (RuntimeException) e;
+                else
+                    throw new ServletException(e.getMessage(), e);
+			}
 		} else {
 			internalDoFilter(request, response);
 		}

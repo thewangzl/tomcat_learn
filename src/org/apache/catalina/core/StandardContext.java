@@ -192,6 +192,11 @@ public class StandardContext extends ContainerBase implements Context {
 	private HashMap<String, String> servletMappings = new HashMap<>();
 	
 	/**
+	 * The session timeout (in minutes) for this web application.
+	 */
+	private int sessionTimeout = 30;
+	
+	/**
 	 * The status code error pages for this web application, keyed by HTTP status code 9a an Integer)
 	 */
 	private HashMap<Integer, ErrorPage> statusPages = new HashMap<>();
@@ -299,10 +304,12 @@ public class StandardContext extends ContainerBase implements Context {
 		return filesystemBased;
 	}
 	
+	@Override
 	public Object[] getApplicationListeners(){
 		return applicationListenersObjects;
 	}
 	
+	@Override
 	public void setApplicationListeners(Object[] applicationListenersObjects) {
 		this.applicationListenersObjects = applicationListenersObjects;
 	}
@@ -482,6 +489,18 @@ public class StandardContext extends ContainerBase implements Context {
 			context = new ApplicationContext(getBasePath(), this);
 		}
 		return context;
+	}
+	
+	@Override
+	public int getSessionTimeout() {
+		return sessionTimeout;
+	}
+	
+	@Override
+	public void setSessionTimeout(int timeout) {
+		int oldSessionTimeout = this.sessionTimeout;
+		this.sessionTimeout = timeout;
+		support.firePropertyChange("sessionTimeout", oldSessionTimeout, this.sessionTimeout);
 	}
 	
 	public boolean getSwallowOutput() {

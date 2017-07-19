@@ -320,6 +320,7 @@ public final class HttpProcessor implements Lifecycle, Runnable {
 				}
 				ok = false;
 			}catch(Throwable t){
+				t.printStackTrace();
 				log("process.invoke", t);
 				try {
 					((HttpServletResponse) response.getResponse()).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
