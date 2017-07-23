@@ -277,7 +277,12 @@ public class StandardManager extends ManagerBase implements Lifecycle, PropertyC
 		try {
 			fos = new FileOutputStream(file.getAbsolutePath());
 			oos = new ObjectOutputStream(new BufferedOutputStream(fos));
-		} catch (IOException e) {
+		} catch(FileNotFoundException e){
+			if (debug >= 1){
+                log("No persisted data file found");
+			}
+			return;
+		}catch (IOException e) {
 			log(sm.getString("standardManager.unloading.ioe", e), e);
             if (oos != null) {
                 try {
@@ -516,6 +521,7 @@ public class StandardManager extends ManagerBase implements Lifecycle, PropertyC
 			}
 		}
 		return file;
+		
 	}
 	
 	/**

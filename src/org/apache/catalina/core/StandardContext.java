@@ -2332,7 +2332,7 @@ public class StandardContext extends ContainerBase implements Context {
 
 			// Stop our Mappers, if any
 			Mapper[] mappers = findMappers();
-			for (int i = mappers.length; i >= 0; i--) {
+			for (int i = mappers.length -1; i >= 0; i--) {
 				if (mappers[i] instanceof Lifecycle) {
 					((Lifecycle) mappers[i]).stop();
 				}

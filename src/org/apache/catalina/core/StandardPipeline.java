@@ -223,23 +223,12 @@ public class StandardPipeline implements Pipeline, Contained, Lifecycle {
 		if(basic != null && basic instanceof Lifecycle) {
 			((Lifecycle) basic).start();
 		}
+		
 		//Notify
-		lifecycle.fireLifecycleEvent(STOP_EVENT, null);
+		lifecycle.fireLifecycleEvent(START_EVENT, null);
+		lifecycle.fireLifecycleEvent(AFTER_START_EVENT, null);
 		
-		lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
-		started  = false;
 		
-		//Stop the valves
-		if(basic != null && basic instanceof Lifecycle){
-			((Lifecycle)basic).stop();
-		}
-		 for (Valve valve : valves) {
-			if(valve instanceof Lifecycle){
-				((Lifecycle) valve).stop();
-			}
-		}
-		 
-		 lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
 	}
 
 	@Override
@@ -252,6 +241,18 @@ public class StandardPipeline implements Pipeline, Contained, Lifecycle {
 		
 		lifecycle.fireLifecycleEvent(STOP_EVENT, null);
 		
+		started = false;
+
+        // Stop the Valves in our pipeline (including the basic), if any
+        if ((basic != null) && (basic instanceof Lifecycle))
+            ((Lifecycle) basic).stop();
+        for (int i = 0; i < valves.length; i++) {
+            if (valves[i] instanceof Lifecycle)
+                ((Lifecycle) valves[i]).stop();
+        }
+
+        // Notify our interested LifecycleListeners
+        lifecycle.fireLifecycleEvent(AFTER_STOP_EVENT, null);
 		
 	}
 	
