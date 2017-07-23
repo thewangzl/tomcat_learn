@@ -72,6 +72,10 @@ public interface Wrapper extends Container {
 
 	void setAvailable(long available);
 
+	String findSecurityReference(String name);
+
+	String[] findSecurityReferences();
+
 	
 	
 }

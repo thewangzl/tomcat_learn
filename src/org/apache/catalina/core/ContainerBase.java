@@ -489,6 +489,10 @@ public abstract class ContainerBase implements Container, Lifecycle, Pipeline {
 		this.parentClassLoader = parentClassLoader;
 		support.firePropertyChange("parentClassLoader", oldParentClassLoader, this.parentClassLoader);
 	}
+	
+	public Pipeline getPipeline() {
+		return pipeline;
+	}
 
 	@Override
 	public Realm getRealm() {

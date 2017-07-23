@@ -58,7 +58,8 @@ public class StandardWrapper extends ContainerBase implements Wrapper, ServletCo
 	/**
 	 * 
 	 */
-	private HashMap<String,String> parameters;
+	private HashMap<String,String> parameters =  new HashMap<>();
+	
 
 	/**
 	 * The (single ) initilized instance of this servlet
@@ -304,12 +305,14 @@ public class StandardWrapper extends ContainerBase implements Wrapper, ServletCo
 		fireContainerEvent("addSecurityReference", name);
 	}
 	
+	@Override
 	public String findSecurityReference(String name){
 		synchronized (references) {
 			return this.references.get(name);
 		}
 	}
 	
+	@Override
 	public String[] findSecurityReferences(){
 		synchronized (references) {
 			return references.keySet().toArray(new String[0]);
