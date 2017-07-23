@@ -24,7 +24,13 @@ import org.apache.catalina.Realm;
 import org.apache.catalina.Request;
 import org.apache.catalina.Response;
 import org.apache.catalina.Valve;
+import org.apache.catalina.Wrapper;
+import org.apache.catalina.deploy.ApplicationParameter;
 import org.apache.catalina.deploy.ErrorPage;
+import org.apache.catalina.deploy.FilterDef;
+import org.apache.catalina.deploy.FilterMap;
+import org.apache.catalina.deploy.LoginConfig;
+import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.LifecycleSupport;
 
 public class SimpleContext implements Context, Pipeline, Lifecycle {
@@ -561,6 +567,360 @@ public class SimpleContext implements Context, Pipeline, Lifecycle {
 
 	@Override
 	public void setSessionTimeout(int timeout) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public SecurityConstraint[] findConstraints() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public LoginConfig getLoginConfig() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setLoginConfig(LoginConfig loginConfig) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addInstanceListener(String listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addFilterDef(FilterDef filterDef) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addMimeMapping(String extension, String mimeType) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addParameter(String name, String value) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addErrorPage(ErrorPage errorPage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addConstraint(SecurityConstraint constraint) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean getDistributable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setDistributable(boolean distributable) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Wrapper createWrapper() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean getOverride() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setOverride(boolean override) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean findSecurityRole(String string) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void addRoleMapping(String role, String link) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addSecurityRole(String role) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String findRoleMapping(String role) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] findSecurityRoles() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addTaglib(String uri, String location) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addWelcomeFile(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String findTaglib(String uri) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean findWelcomeFile(String name) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int[] findStatusPages() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String findStatusPage(String status) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] findTaglibs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeTaglib(String uri) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String[] findApplicationListeners() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ApplicationParameter[] findApplicationParameters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeApplicationListener(String listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeApplicationParameter(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeConstraint(SecurityConstraint constraint) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ErrorPage[] findErrorPages() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public FilterDef findFilterDef(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public FilterDef[] findFilterDefs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public FilterMap[] findFilterMaps() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] findInstanceListeners() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String findMimeMapping(String extension) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] findMimeMappings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String findParameter(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] findParameters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void removeErrorPage(ErrorPage errorPage) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeFilterDef(FilterDef filterDef) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeFilterMap(FilterMap filterMap) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeInstanceListener(String listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeParameter(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeServletMappings(String pattern) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeMimeMapping(String extension) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeRoleMapping(String role) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeSecurityRole(String role) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeServletMapping(String pattern) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeWelcomeFile(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeWrapperLifecycle(String listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeWrapperListener(String listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String[] findWelcomeFiles() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] findWrapperLifecycles() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] findWrapperListeners() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addWrapperLifecycle(String listener) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addWrapperListener(String listener) {
 		// TODO Auto-generated method stub
 		
 	}

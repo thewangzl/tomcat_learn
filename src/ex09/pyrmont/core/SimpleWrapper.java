@@ -481,6 +481,18 @@ public class SimpleWrapper implements Wrapper,Pipeline, Lifecycle {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public String findSecurityReference(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] findSecurityReferences() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 
