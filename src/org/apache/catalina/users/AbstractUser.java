@@ -1,16 +1,41 @@
-package org.apache.catalina;
+package org.apache.catalina.users;
 
-import java.security.Principal;
 import java.util.Iterator;
 
-public interface User extends Principal {
+import org.apache.catalina.Group;
+import org.apache.catalina.Role;
+import org.apache.catalina.User;
+import org.apache.catalina.UserDatabase;
+
+public abstract class AbstractUser implements User {
+
+	// ----------------------------------------------------- Instance Variables
+
+	/**
+	 * The full name of this user.
+	 */
+	protected String fullName = null;
+
+	/**
+	 * The logon password of this user.
+	 */
+	protected String password = null;
+
+	/**
+	 * The logon username of this user.
+	 */
+	protected String username = null;
 
 	// ------------------------------------------------------------- Properties
 
 	/**
 	 * Return the full name of this user.
 	 */
-	public String getFullName();
+	public String getFullName() {
+
+		return (this.fullName);
+
+	}
 
 	/**
 	 * Set the full name of this user.
@@ -18,19 +43,27 @@ public interface User extends Principal {
 	 * @param fullName
 	 *            The new full name
 	 */
-	public void setFullName(String fullName);
+	public void setFullName(String fullName) {
+
+		this.fullName = fullName;
+
+	}
 
 	/**
 	 * Return the set of {@link Group}s to which this user belongs.
 	 */
-	public Iterator getGroups();
+	public abstract Iterator getGroups();
 
 	/**
 	 * Return the logon password of this user, optionally prefixed with the
 	 * identifier of an encoding scheme surrounded by curly braces, such as
 	 * <code>{md5}xxxxx</code>.
 	 */
-	public String getPassword();
+	public String getPassword() {
+
+		return (this.password);
+
+	}
 
 	/**
 	 * Set the logon password of this user, optionally prefixed with the
@@ -40,23 +73,26 @@ public interface User extends Principal {
 	 * @param password
 	 *            The new logon password
 	 */
-	public void setPassword(String password);
+	public void setPassword(String password) {
+
+		this.password = password;
+
+	}
 
 	/**
 	 * Return the set of {@link Role}s assigned specifically to this user.
 	 */
-	public Iterator getRoles();
-
-	/**
-	 * Return the {@link UserDatabase} within which this User is defined.
-	 */
-	public UserDatabase getUserDatabase();
+	public abstract Iterator getRoles();
 
 	/**
 	 * Return the logon username of this user, which must be unique within the
 	 * scope of a {@link UserDatabase}.
 	 */
-	public String getUsername();
+	public String getUsername() {
+
+		return (this.username);
+
+	}
 
 	/**
 	 * Set the logon username of this user, which must be unique within the
@@ -65,7 +101,11 @@ public interface User extends Principal {
 	 * @param username
 	 *            The new logon username
 	 */
-	public void setUsername(String username);
+	public void setUsername(String username) {
+
+		this.username = username;
+
+	}
 
 	// --------------------------------------------------------- Public Methods
 
@@ -75,15 +115,15 @@ public interface User extends Principal {
 	 * @param group
 	 *            The new group
 	 */
-	public void addGroup(Group group);
+	public abstract void addGroup(Group group);
 
 	/**
-	 * Add a {@link Role} to those assigned specifically to this user.
+	 * Add a new {@link Role} to those assigned specifically to this user.
 	 *
 	 * @param role
 	 *            The new role
 	 */
-	public void addRole(Role role);
+	public abstract void addRole(Role role);
 
 	/**
 	 * Is this user in the specified {@link Group}?
@@ -91,7 +131,7 @@ public interface User extends Principal {
 	 * @param group
 	 *            The group to check
 	 */
-	public boolean isInGroup(Group group);
+	public abstract boolean isInGroup(Group group);
 
 	/**
 	 * Is this user specifically assigned the specified {@link Role}? This
@@ -101,7 +141,7 @@ public interface User extends Principal {
 	 * @param role
 	 *            The role to check
 	 */
-	public boolean isInRole(Role role);
+	public abstract boolean isInRole(Role role);
 
 	/**
 	 * Remove a {@link Group} from those this user belongs to.
@@ -109,12 +149,12 @@ public interface User extends Principal {
 	 * @param group
 	 *            The old group
 	 */
-	public void removeGroup(Group group);
+	public abstract void removeGroup(Group group);
 
 	/**
 	 * Remove all {@link Group}s from those this user belongs to.
 	 */
-	public void removeGroups();
+	public abstract void removeGroups();
 
 	/**
 	 * Remove a {@link Role} from those assigned to this user.
@@ -122,10 +162,22 @@ public interface User extends Principal {
 	 * @param role
 	 *            The old role
 	 */
-	public void removeRole(Role role);
+	public abstract void removeRole(Role role);
 
 	/**
 	 * Remove all {@link Role}s from those assigned to this user.
 	 */
-	public void removeRoles();
+	public abstract void removeRoles();
+
+	// ------------------------------------------------------ Principal Methods
+
+	/**
+	 * Make the principal name the same as the group name.
+	 */
+	public String getName() {
+
+		return (getUsername());
+
+	}
+
 }

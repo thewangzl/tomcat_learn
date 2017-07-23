@@ -6,7 +6,6 @@ import org.apache.catalina.Context;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Loader;
-import org.apache.catalina.Mapper;
 import org.apache.catalina.Realm;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.connector.http.HttpConnector;
@@ -23,7 +22,7 @@ import ex10.pyrmont.core.SimpleContextConfig;
 import ex10.pyrmont.core.SimpleWrapper;
 import ex10.pyrmont.realm.SimpleRealm;
 
-public class Bootstrap {
+public class Bootstrap1 {
 
 	public static void main(String[] args) {
 
@@ -83,7 +82,6 @@ public class Bootstrap {
 		//--------------------
 		
 		connector.setContainer(context);
-		System.out.println(Bootstrap.class.getClassLoader());
 		try {
 			connector.initialize();
 			
