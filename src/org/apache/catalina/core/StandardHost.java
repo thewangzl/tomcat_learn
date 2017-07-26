@@ -1,83 +1,99 @@
 package org.apache.catalina.core;
 
+import java.io.IOException;
+import java.net.URL;
+
 import org.apache.catalina.Context;
 import org.apache.catalina.DefaultContext;
+import org.apache.catalina.Deployer;
 import org.apache.catalina.Host;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Valve;
 import org.apache.catalina.valves.ErrorDispatcherValve;
 
 /**
- * Standard implementation of the <b>Host</b> interface. Each child container nust be a Context
- * implementation to process the requests directed to a particular web application.
+ * Standard implementation of the <b>Host</b> interface. Each child container
+ * nust be a Context implementation to process the requests directed to a
+ * particular web application.
  * 
  * @author thewangzl
  *
  */
-public class StandardHost extends ContainerBase implements Host {
+public class StandardHost extends ContainerBase implements Deployer,Host {
 
 	private String[] aliases = new String[0];
-	
+
 	/**
 	 * The application root for this root.
 	 */
 	private String appBase = ".";
-	
+
 	/**
 	 * 
 	 */
 	private boolean autoDeploy;
-	
+
 	/**
-	 * The Java class name of the default context configuration class for deployed 
-	 * web applications.
+	 * The Java class name of the default context configuration class for
+	 * deployed web applications.
 	 */
 	private String configClass = "org.apache.catalina.startup.ContextConfig";
-	
+
 	/**
-	 * The Java class name of the default Context implementation class for deployed web applications.
+	 * The Java class name of the default Context implementation class for
+	 * deployed web applications.
 	 */
 	private String contextClass = "org.apache.catalina.core.StandardContext";
-	
+
+	private Deployer deployer = new StandardHostDeployer(this);
 	/**
-	 * The Java class name of the default error reporter implementation class for deployed web applicaition./
+	 * deploy Context XML config files property.
+	 */
+	private boolean deployXML = true;
+
+	/**
+	 * The Java class name of the default error reporter implementation class
+	 * for deployed web applicaition./
 	 */
 	private String errorReportValveClass = "org.apache.catalina.valves.ErrorReportValve";
-	
+
 	protected static final String info = "apache.catalina.core.StandardHost/1.0";
-	
+
+	/**
+	 * The live deploy flag for this Host.
+	 */
+	private boolean liveDeploy = true;
+
 	/**
 	 * The Java class name of the default Mapper class for this Context.
 	 */
 	protected String mapperClass = "org.apache.catalina.core.StandardHostMapper";
-	
+
 	/**
 	 * Unpack WARs property
 	 */
 	private boolean unpackWARs = true;
-	
+
 	/**
 	 * Work Directory base for applications.
 	 */
 	private String workDir;
-	
+
 	/**
 	 * DefaultContext config
 	 */
 	private DefaultContext defaultContext;
-	
-	
+
 	public StandardHost() {
 		super();
 		pipeline.setBasic(new StandardHostValve());
 	}
-	
+
 	// -------------------------------------------------------------- Properties
-	
-	
+
 	@Override
 	public String getAppBase() {
-		
+
 		return this.appBase;
 	}
 
@@ -99,11 +115,11 @@ public class StandardHost extends ContainerBase implements Host {
 		this.autoDeploy = autoDeploy;
 		support.firePropertyChange("autoDeploy", oldAutoDeploy, this.autoDeploy);
 	}
-	
+
 	public String getConfigClass() {
 		return configClass;
 	}
-	 
+
 	public void setConfigClass(String configClass) {
 		String oldConfigClass = this.configClass;
 		this.configClass = configClass;
@@ -115,7 +131,7 @@ public class StandardHost extends ContainerBase implements Host {
 		DefaultContext oldDefaultContext = this.defaultContext;
 		this.defaultContext = defaultContext;
 		support.firePropertyChange("defaultConfig", oldDefaultContext, this.defaultContext);
-		
+
 	}
 
 	@Override
@@ -123,60 +139,79 @@ public class StandardHost extends ContainerBase implements Host {
 
 		return this.defaultContext;
 	}
-	
+
 	public String getContextClass() {
 		return contextClass;
 	}
+
 	public void setContextClass(String contextClass) {
 		String oldContextClass = this.contextClass;
 		this.contextClass = contextClass;
 		support.firePropertyChange("contextClass", oldContextClass, this.contextClass);
 	}
-	
+
+	public boolean isDeployXML() {
+		return deployXML;
+	}
+
+	public void setDeployXML(boolean deployXML) {
+		this.deployXML = deployXML;
+	}
+
+	public boolean getLiveDeploy() {
+		return liveDeploy;
+	}
+
+	public void setLiveDeploy(boolean liveDeploy) {
+		this.liveDeploy = liveDeploy;
+	}
+
 	public String getMapperClass() {
 		return mapperClass;
 	}
+
 	public void setMapperClass(String mapperClass) {
 		String oldMapperClass = mapperClass;
 		this.mapperClass = mapperClass;
 		support.firePropertyChange("mapperClass", oldMapperClass, this.mapperClass);
 	}
-	
+
 	public String getErrorReportValveClass() {
 		return errorReportValveClass;
 	}
-	
+
 	public void setErrorReportValveClass(String errorReportValveClass) {
 		String oldErrorReportValveClass = this.errorReportValveClass;
 		this.errorReportValveClass = errorReportValveClass;
-		support.firePropertyChange("errorReportValveClass", oldErrorReportValveClass, this.errorReportValveClass);;
+		support.firePropertyChange("errorReportValveClass", oldErrorReportValveClass, this.errorReportValveClass);
+		;
 	}
-	
+
 	@Override
 	public void setName(String name) {
-		if(name == null){
+		if (name == null) {
 			throw new IllegalArgumentException("standardHost.nullName");
 		}
-		name = name.toLowerCase();		//Internally all names are lower case
+		name = name.toLowerCase(); // Internally all names are lower case
 		super.setName(name);
 	}
-	
+
 	public boolean isUnpackWARs() {
 		return unpackWARs;
 	}
-	
+
 	public void setUnpackWARs(boolean unpackWARs) {
 		this.unpackWARs = unpackWARs;
 	}
-	
+
 	public String getWorkDir() {
 		return workDir;
 	}
-	
+
 	public void setWorkDir(String workDir) {
 		this.workDir = workDir;
 	}
-	
+
 	/**
 	 * Import the DefaultContext config into a web application context.
 	 * 
@@ -184,30 +219,30 @@ public class StandardHost extends ContainerBase implements Host {
 	 */
 	@Override
 	public void importDefaultContext(Context context) {
-		// TODO Auto-generated method stub
-		
+		if( this.defaultContext != null )
+            this.defaultContext.importDefaultContext(context);
 	}
 
 	@Override
 	public void addAlias(String alias) {
 		alias = alias.toLowerCase();
-		
-		//Skip deplicate aliases
+
+		// Skip deplicate aliases
 		for (int i = 0; i < aliases.length; i++) {
-			if(aliases[i].equals(alias)){
+			if (aliases[i].equals(alias)) {
 				return;
 			}
 		}
-		
-		//Add this alias to the list
+
+		// Add this alias to the list
 		String[] results = new String[aliases.length + 1];
 		for (int i = 0; i < aliases.length; i++) {
 			results[i] = aliases[i];
 		}
 		results[aliases.length] = alias;
 		aliases = results;
-		
-		//Inform interested listeners
+
+		// Inform interested listeners
 		fireContainerEvent(ADD_ALIAS_EVENT, alias);
 	}
 
@@ -220,83 +255,83 @@ public class StandardHost extends ContainerBase implements Host {
 	@Override
 	public void removeAlias(String alias) {
 		alias = alias.toLowerCase();
-		
+
 		synchronized (aliases) {
-			//Marke sure this alias is currently present
+			// Marke sure this alias is currently present
 			int n = -1;
 			for (int i = 0; i < aliases.length; i++) {
-				if(aliases[i].equals(alias)){
+				if (aliases[i].equals(alias)) {
 					n = i;
 					break;
 				}
 			}
-			if(n < 0){
+			if (n < 0) {
 				return;
 			}
-			
-			//Remove the specified alias
+
+			// Remove the specified alias
 			int j = 0;
 			String[] results = new String[aliases.length - 1];
 			for (int i = 0; i < aliases.length; i++) {
-				if(i != n){
+				if (i != n) {
 					results[j++] = aliases[i];
 				}
 			}
 			aliases = results;
 		}
-		
-		//Inform interested listeners
+
+		// Inform interested listeners
 		fireContainerEvent(REMOVE_ALIAS_EVENT, alias);
 	}
-	
+
 	@Override
 	public Context map(String uri) {
-		if(debug > 0){
+		if (debug > 0) {
 			log("Mapping request URI '" + uri + "'");
 		}
-		if(uri == null){
+		if (uri == null) {
 			return null;
 		}
-		
-		//Match on the longest possible context path prefix
-		if(debug > 1){
+
+		// Match on the longest possible context path prefix
+		if (debug > 1) {
 			log("Trying the longest context path prefix");
 		}
 		Context context = null;
 		String mapuri = uri;
-		while(true){
+		while (true) {
 			context = ((Context) findChild(mapuri));
-			if(context != null){
+			if (context != null) {
 				break;
 			}
 			int slash = mapuri.lastIndexOf('/');
-			if(slash < 0){
+			if (slash < 0) {
 				break;
 			}
 			mapuri = mapuri.substring(0, slash);
 		}
-		
-		//If no Context matches, select the default Context.
-		if(context == null){
-			if(debug > 1){
+
+		// If no Context matches, select the default Context.
+		if (context == null) {
+			if (debug > 1) {
 				log("Trying the default Context");
 			}
 			context = (Context) findChild("");
 		}
-		
-		//Complain if no Context has been selected
-		if(context == null){
+
+		// Complain if no Context has been selected
+		if (context == null) {
 			log(sm.getString("standardHost.mappingError", uri));
 			return null;
 		}
-		
+
 		// Return the mapped Context (if any)
-		if(debug > 0){
+		if (debug > 0) {
 			log("Mapped to context '" + context.getPath() + "'");
 		}
 		return context;
 	}
-	
+
 	/**
 	 * Start this host.
 	 * 
@@ -304,25 +339,23 @@ public class StandardHost extends ContainerBase implements Host {
 	 */
 	@Override
 	public synchronized void start() throws LifecycleException {
-		
-		//Set error report valve
-		if(errorReportValveClass != null && !errorReportValveClass.equals("")){
-			try{
+
+		// Set error report valve
+		if (errorReportValveClass != null && !errorReportValveClass.equals("")) {
+			try {
 				Valve valve = (Valve) Class.forName(errorReportValveClass).newInstance();
 				addValve(valve);
-			}catch(Throwable t){
-				log(sm.getString("standardHost.invalidErrorReportValveClass",errorReportValveClass));
+			} catch (Throwable t) {
+				log(sm.getString("standardHost.invalidErrorReportValveClass", errorReportValveClass));
 			}
 		}
 
 		// Set dispatcher valve
 		addValve(new ErrorDispatcherValve());
-		
+
 		super.start();
 	}
-	
 
-	
 	@Override
 	protected void addDefaultMapper(String mapperClass) {
 
@@ -334,19 +367,53 @@ public class StandardHost extends ContainerBase implements Host {
 		return info;
 	}
 
-	
 	@Override
 	public String toString() {
 
-        StringBuffer sb = new StringBuffer();
-        if (getParent() != null) {
-            sb.append(getParent().toString());
-            sb.append(".");
-        }
-        sb.append("StandardHost[");
-        sb.append(getName());
-        sb.append("]");
-        return (sb.toString());
+		StringBuffer sb = new StringBuffer();
+		if (getParent() != null) {
+			sb.append(getParent().toString());
+			sb.append(".");
+		}
+		sb.append("StandardHost[");
+		sb.append(getName());
+		sb.append("]");
+		return (sb.toString());
+	}
+
+	@Override
+	public void install(String config, URL war) throws IOException {
+		deployer.install(config, war);
+	}
+
+	@Override
+	public void install(URL config, URL war) throws IOException {
+		deployer.install(config, war);
+	}
+
+	@Override
+	public Context findDeployedApp(String contextPath) {
+		return deployer.findDeployedApp(contextPath);
+	}
+
+	@Override
+	public String[] findDeployedApps() {
+		return deployer.findDeployedApps();
+	}
+
+	@Override
+	public void remove(String contextPath) throws IOException {
+		deployer.remove(contextPath);
+	}
+
+	@Override
+	public void start(String contextPath) throws IOException {
+		deployer.start(contextPath);
+	}
+
+	@Override
+	public void stop(String contextPath) throws IOException {
+		deployer.stop(contextPath);
 	}
 
 }
